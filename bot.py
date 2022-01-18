@@ -1,17 +1,21 @@
 import discord
 import config
+import os
 
 bot = discord.Bot()
 
-@bot.slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID])
-async def hello(ctx):
-    await ctx.respond("Hello!")
-
 @bot.event
-async def on_message(msg):
-    if msg.author.bot: return
+async def on_ready():
+    await bot.change_presence(activity=discord.Game('test'))
 
-    if 'nft' in msg.content.lower():
-        await msg.channel.send('nft bad')
+for file in os.listdir('extension'):
+    if not file.endswith('.py'):
+        continue
+    extension = file[:-3]
+    try:
+        bot.load_extension('extension.' + extension)
+    except Exception as e:
+        exc = f'{type(e).__name__}: {e}'
+        print(f'Failed to load extension {extension}\n{exc}')
 
 bot.run(config.TOKEN)
