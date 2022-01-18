@@ -1,12 +1,25 @@
 import discord
+from discord.ext import commands
 import config
 import os
 
-bot = discord.Bot()
+bot = commands.Bot()
 
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game('test'))
+
+# currently won't work: slash commands cannot be reloaded.
+# hopefully will be changed in the future
+@bot.slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID])
+@commands.is_owner()
+async def reload(ctx: discord.ApplicationContext, ext: str):
+    try:
+        bot.reload_extension('extension.' + ext)
+    except Exception as e:
+        exc = f'{type(e).__name__}: {e}'
+        print(f'Failed to reload extension {ext}\n{exc}')
+    await ctx.respond('Done')
 
 for file in os.listdir('extension'):
     if not file.endswith('.py'):
