@@ -21,18 +21,13 @@ class CSGO(commands.Cog):
         description="Retrieve a player's CSGO stats.")
     async def csgostats(self,
         ctx: discord.ApplicationContext,
-        username: Option(str, "Custom profile name", required=False, default=None),
-        url: Option(str, "Steam profile URL", required=False, default=None)):
-
-        if not username and not url:
-            return await ctx.respond('No user specified.')
+        url: Option(str, "Steam profile URL (or custom URL name)", required=True)):
         
-        if url:
+        if '/' in url[:-1]:
             if url[-1] == '/':
                 url = url[:-1]
             user = url[url.rindex('/')+1:]
-        elif username:
-            user = username
+        else: user = url
 
         await ctx.defer() # need to defer so the command doesn't time out
 
@@ -41,7 +36,7 @@ class CSGO(commands.Cog):
         except Exception as e:
             return await ctx.respond(e.args[0])
 
-        embed=discord.Embed(title=f"CS:GO stats for user {user}", description="from csgostats.gg")
+        embed=discord.Embed(title=f"CS:GO stats for {stats['nickname']}", description="from csgostats.gg")
         for k, v in stat_values.items():
             embed.add_field(name=k, value=stats['overall'][v], inline=True)
         embed.set_thumbnail(url=stats['thumbnail'])

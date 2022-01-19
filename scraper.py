@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import json
 
+find_nickname = re.compile('Nick Name\\n<input type="text" onclick="this\\.select\\(\\);" value="(.+)">')
 find_thumbnail = re.compile('src="(https:\\/\\/.+_full.jpg)"')
 find_id = re.compile('"(\\d{17})"')
 find_stats = re.compile('var stats = ({.+});')
@@ -26,6 +27,12 @@ def get_stats(query):
 
     # find the steamID of the user
     driver.get(f'https://steamid.xyz/{query}')
+
+    result = find_nickname.search(driver.page_source)
+    if not result:
+        raise Exception('Could not find user.')
+    nickname = result.group(1)
+
     result = find_id.search(driver.page_source)
     if not result:
         raise Exception('Could not find user.')
@@ -42,6 +49,7 @@ def get_stats(query):
         raise Exception('Could not find user on csgostats.gg')
 
     stats = json.loads(result.group(1))
+    stats['nickname'] = nickname
     stats['thumbnail'] = thumbnail
 
     driver.close()
