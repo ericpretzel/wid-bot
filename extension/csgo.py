@@ -2,7 +2,7 @@ import config
 import discord
 from discord.ext import commands
 from discord.commands import slash_command, Option
-from scraper import get_stats
+from util.csgoscraper import get_stats
 
 # display value : json value
 stat_values = {
@@ -10,7 +10,11 @@ stat_values = {
     'HS %': 'hs',
     'K/D': 'kpd',
     'Rating': 'rating',
-    'Win %': 'wr'
+    'Win %': 'wr',
+    'Games Played': 'games',
+    'Current Rank': 'current_rank',
+    'Best Rank': 'best_rank'
+    # thumbnail
 }
 
 class CSGO(commands.Cog):
@@ -29,16 +33,16 @@ class CSGO(commands.Cog):
             user = url[url.rindex('/')+1:]
         else: user = url
 
-        await ctx.defer() # need to defer so the command doesn't time out
+        await ctx.defer()
 
         try:
             stats = get_stats(user)
         except Exception as e:
-            return await ctx.respond(e.args[0])
+            return await ctx.respond('An error occurred.')
 
         embed=discord.Embed(title=f"CS:GO stats for {stats['nickname']}", description="from csgostats.gg")
         for k, v in stat_values.items():
-            embed.add_field(name=k, value=stats['overall'][v], inline=True)
+            embed.add_field(name=k, value=stats[v], inline=True)
         embed.set_thumbnail(url=stats['thumbnail'])
 
         await ctx.respond(embed=embed)
