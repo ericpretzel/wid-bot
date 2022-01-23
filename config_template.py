@@ -1,13 +1,20 @@
-# Template file
-# Replace TOKEN with your own discord bot's token
-TOKEN = 'abcdefg'
+# This file should never be committed!
+
+TOKEN = '<discord-token-here>'
+
 
 WIDMARK_CLAN_GUILD_ID = 842270794562535434
 
 PRIVATE_PORN_CHANNEL_ID = 882074562529988649
 
+WALLET = 'wallet.json'
+NFT_SIZE = 600
+PREFIX = 'https://ipfs.io/ipfs/'
+BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
+
 blacklist = {
     'YERBA': 171396895661359104,
     'SAMMICH': 215276133875318785,
     'ERAKAI': 215272766977474561
+
 }
