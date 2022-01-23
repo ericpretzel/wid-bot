@@ -292,6 +292,7 @@
                 "sha256:8ddd78563b633ca55346c8cd41ec0af27d3c79931828beffb46ce70a379e7442"
             ],
             "markers": "python_version >= '3.6'",
+
             "version": "==0.13.0"
         },
         "idna": {
