@@ -22,12 +22,12 @@ class Crypto(commands.Cog):
         
         if not user: user = ctx.author
 
-        user_wallet = ensure_wallet(user, config)
+        user_wallet = ensure_wallet(user)
 
         if(user_wallet):
             nft = user_wallet[(nft_id or -1)% len(user_wallet)]
             embed = discord.Embed(title=f"{user.nick or user.name}\'s latest NFT!", description=f'Chance to get: {nft["rarity"]}%')
-            file = show(nft, config)
+            file = show(nft)
             embed.set_image(url=f'attachment://{nft["address"]}.png')
             embed.set_footer(text=str(nft["address"]))
             await ctx.respond(embed=embed, file=file)
@@ -40,13 +40,13 @@ class Crypto(commands.Cog):
     async def mint(self,
         ctx: discord.ApplicationContext):
         try:
-            nft = mint_nft(config)
+            nft = mint_nft()
             user = ctx.author
 
-            own_nft(user, nft, config)
+            own_nft(user, nft)
 
             embed = discord.Embed(title=f"{user.nick or user.name} just minted a new NFT!", description=f'Chance to get: {nft["rarity"]}%')
-            file = show(nft, config)
+            file = show(nft)
             embed.set_image(url=f'attachment://{nft["address"]}.png')
             embed.set_footer(text=str(nft["address"]))
             await ctx.respond(embed=embed, file=file)

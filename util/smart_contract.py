@@ -11,7 +11,7 @@ import json
 from numpy.random import randint
 import requests
 
-def ensure_wallet(user, config):
+def ensure_wallet(user):
     try:
         with open(config.WALLET, 'rt') as w:
             nft_wallet = json.load(w)
@@ -20,7 +20,7 @@ def ensure_wallet(user, config):
         with open(config.WALLET, 'wt') as w:
             w.write("{}")
 
-def own_nft(user, nft, config):
+def own_nft(user, nft):
     try:
         with open(config.WALLET, 'rt') as w:
             nft_wallet = json.load(w)
@@ -34,7 +34,7 @@ def own_nft(user, nft, config):
     with open(config.WALLET, 'wt') as w:
         json.dump(nft_wallet, w)
 
-def mint_nft(config):
+def mint_nft():
     """
     Widmark clan super advanced NFT smart contract
     """
@@ -46,7 +46,7 @@ def nft(_base, _colors):
     for v in _colors: color *= v
     return {"base":_base, "colors": _colors, "rarity": randint(1,100), "address":hex(int(0x100000000)+color)}
 
-def show(nft, config):
+def show(nft):
     response = requests.get(config.PREFIX + config.BASE, stream=True)
 
     base = Image.open(response.raw)
