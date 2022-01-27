@@ -3,11 +3,14 @@ from discord.ext import commands
 import config
 import os
 
+print('wid is loading...')
+
 bot = commands.Bot()
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game('test'))
+    await bot.change_presence(activity=discord.Game('CS:GO with widmark clan'))
+    print('wid is ready!')
 
 # currently won't work: slash commands cannot be reloaded.
 # hopefully will be changed in the future
