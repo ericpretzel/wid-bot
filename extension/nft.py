@@ -19,6 +19,7 @@ class Crypto(commands.Cog):
     async def wallet(self,
         ctx: discord.ApplicationContext,
         user:  discord.Member=None, nft_id: int=None):
+        await ctx.defer()
         
         if not user: user = ctx.author
 
@@ -39,6 +40,7 @@ class Crypto(commands.Cog):
         description="Mint an NFT on the Widcoin blockchain.")
     async def mint(self,
         ctx: discord.ApplicationContext):
+        await ctx.defer()
         try:
             nft = mint_nft()
             user = ctx.author
