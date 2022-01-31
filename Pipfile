@@ -14,3 +14,4 @@ selenium = "*"
 py-cord = {git = "https://github.com/Pycord-Development/pycord.git", editable = true, ref = "master"}
 numpy = "*"
 pillow = "*"
+asyncpraw = "*"
