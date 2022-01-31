@@ -39,8 +39,6 @@ class Wordle(commands.Cog):
                 guess = ' '.join([f':regional_indicator_{c}:' for c in guess])
                 embed.add_field(name=guess, value=ans, inline=False)
                 await ctx.edit(embed=embed)
-                
-                await asyncio.sleep(0.25)
             except asyncio.TimeoutError:
                 break
             except InvalidGuessException as e:
