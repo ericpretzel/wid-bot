@@ -45,7 +45,7 @@ class AITA(commands.Cog):
         self.bot = bot
 
     @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
-        description="Are they the Asshole?")
+        description="Is OP the asshole?")
     async def aita(self, ctx: discord.ApplicationContext):
         try:
             # holy fucking shi ti commands without this response the entire thing beraks cause if you dont respond in 3 seconds the slash commands falls through and because i have intractions on the butotns the error i got is "unkown interaction" which is incredibly uselessd adn tells you nothing so the only solution is to find a stackoverflow post about thie error in ajvascript with 2 upvotes and see somethign taht says that you need a response immedaitely so discord doesnt berak it 
