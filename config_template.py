@@ -10,6 +10,9 @@ NFT_SIZE = 600
 PREFIX = 'https://ipfs.io/ipfs/'
 BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
 
+WORDLE_WORD_LIST = 'data/wordle-word-list.txt'
+FIVE_LETTER_WORDS = 'data/five-letter-words.txt'
+
 blacklist = {
     'YERBA': 171396895661359104,
     'SAMMICH': 215276133875318785,
