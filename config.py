@@ -1,6 +1,9 @@
 import os
 # Discord bot access token. Located in .env file in base directory.
 TOKEN = os.environ['TOKEN']
+# You get these from developer settings in reddit, ask kai to get added as developer
+REDDIT_SECRET = os.environ['REDDIT_SECRET']
+REDDIT_ID = os.environ['REDDIT_ID']
 
 # hard-coded channel/server IDs
 WIDMARK_CLAN_GUILD_ID = 842270794562535434
