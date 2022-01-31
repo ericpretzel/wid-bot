@@ -2,26 +2,10 @@ from random import randint
 import config
 
 class WordleGame:
-    """
-    Starts a new game bound to a player
-    Only one game can be played at a time by a player
-    """
-    def __init__(self, player):
+    def __init__(self):
         self.word = self.get_word()
-        self.player = player
         self.guesses = set()
-    
-    """
-    Return True if game is won
-    Return False if game is lost
-    Return None if game is still going
-    """
-    def result(self):
-        if self.word in self.guesses:
-            return True
-        elif len(self.guesses) >= 6:
-            return False
-        return None
+        self.result = None
 
     def get_word(self):
         with open(config.WORDLE_WORD_LIST) as f:
@@ -38,6 +22,12 @@ class WordleGame:
     ⬛ - incorrect
     🟨 - correct, but wrong spot
     🟩 - correct, and right spot
+
+    Also modifies the game's result.
+
+    result -> True if game is won
+           -> False if game is lost
+           -> None if game is still going
     """
     def check(self, guess: str):
         if len(guess) != 5:
@@ -47,23 +37,28 @@ class WordleGame:
         if not self.is_valid(guess):
             raise InvalidGuessException(f'"{guess}" is not in the word list.')
         self.guesses.add(guess)
-        result = []
+
+        if guess == self.word:
+            self.result = True
+        elif len(self.guesses) >= 6:
+            self.result = False
+        else: 
+            self.result = None
 
         count = {c : self.word.count(c) for c in guess}
-
+        emojis = ['' for _ in range(len(guess))]
         for i in range(len(guess)):
             if guess[i] == self.word[i]:
-                e = '🟩'
+                emojis[i] = '🟩'
                 count[guess[i]] -= 1
+        for i in range(len(guess)):
+            if guess[i] == self.word[i]: continue
             elif guess[i] in self.word and count[guess[i]] > 0:
-                e = '🟨'
+                emojis[i] = '🟨'
                 count[guess[i]] -= 1
             else:
-                e = '⬛'
-            result.append(e)
-        return result
+                emojis[i] = '⬛'
+        return emojis
 
 class InvalidGuessException(Exception):
     pass
-
-
