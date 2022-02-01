@@ -38,11 +38,12 @@ async def get_aita():
             decision = decision + "\n\n>>> " + top_comment.body
             break
 
+    description = post.selftext.replace("*", "\*").replace("_", "\_").replace("~", "\~")
     submission = {
         "title": post.title,
         "author": post.author,
         "upvotes": post.score,
-        "desc": post.selftext,
+        "desc": description,
         "link": post.permalink,
         "decision": decision,
         "sdec": single_decision
