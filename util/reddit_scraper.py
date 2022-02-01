@@ -21,12 +21,10 @@ async def get_aita():
     comments = post.comments.list()
 
     decisions = ['YTA', 'NTA', 'ESH', 'INFO']
-    for top_comment in comments:
-        if top_comment.stickied: continue
-
+    for top_comment in filter(lambda c: not c.stickied, comments):
         decision = f"The top-level-comment with {top_comment.score} upvotes made the decision: "
         single_decision = "None"
-        for i in decisions[:]:
+        for i in decisions:
             if i in top_comment.body: 
                 if single_decision != "None":
                     single_decision = "None"
@@ -49,4 +47,5 @@ async def get_aita():
         "sdec": single_decision
     }
 
+    await r.close()
     return submission
