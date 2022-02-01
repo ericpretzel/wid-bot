@@ -1,5 +1,5 @@
 """
-Author: Kai (Not Eric (Not Lance (Not Russell)))
+Author: Kai (Not Lance (Not Russell))
 """
 
 import config
@@ -18,27 +18,39 @@ class AitaView(View):
     @discord.ui.button(label='YTA', style=ButtonStyle.red)
     async def yta_callback(self, button, interaction):
         await interaction.response.send_message( 
-                content=self.get_response('YTA', self.post["sdec"], self.post["decision"]), ephemeral=True)
+                content=self.get_response(button.label), ephemeral=True)
 
     @discord.ui.button(label='NTA', style=ButtonStyle.green)
     async def nta_callback(self, button, interaction):
         await interaction.response.send_message( 
-                content=self.get_response('NTA', self.post["sdec"], self.post["decision"]), ephemeral=True)
+                content=self.get_response(button.label), ephemeral=True)
 
     @discord.ui.button(label='ESH', style=ButtonStyle.blurple)
     async def esh_callback(self, button, interaction):
         await interaction.response.send_message( 
-                content=self.get_response('ESH', self.post["sdec"], self.post["decision"]), ephemeral=True)
+                content=self.get_response(button.label), ephemeral=True)
+    
+    @discord.ui.button(label='NAH', style=ButtonStyle.gray)
+    async def nah_callback(self, button, interaction):
+        await interaction.response.send_message( 
+                content=self.get_response(button.label), ephemeral=True)
 
     @discord.ui.button(label='INFO', style=ButtonStyle.grey)
     async def info_callback(self, button, interaction):
         await interaction.response.send_message( 
-                content=self.get_response('INFO', self.post["sdec"], self.post["decision"]), ephemeral=True)
+                content=self.get_response(button.label), ephemeral=True)
 
-    def get_response(self, guess, decision, text):
-        if (decision == "None"): return "Unable to locate a top comment with a valid decision. {text}"
-        if (guess == decision): return f"{guess} was **correct**! {text}"
-        return f"{guess} was **incorrect**! {text}"
+    # must truncate it to 2000 characters
+    def get_response(self, guess):
+        if self.post['sdec'] == "None": 
+            content = f"Unable to locate a top comment with a valid decision. {self.post['decision']}"
+        elif guess == self.post['sdec']: 
+            content = f"{guess} was **correct**! {self.post['decision']}"
+        else: 
+            content = f"{guess} was **incorrect**! {self.post['decision']}"
+        if len(content) > 2000:
+            content = content[:2000-3] + '...'
+        return content
 
 class AITA(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -53,6 +65,10 @@ class AITA(commands.Cog):
         except Exception as e:
             return await ctx.respond('Unable to find an asshole. Try the mirror.', ephemeral=True)  
         
+        # must truncate embed descriptions to 4096 chars
+        if len(post['desc']) > 4096:
+            post['desc'] = post['desc'][:4096-3] + '...' 
+
         embed = discord.Embed(
             title=post['title'],
             url=f"https://reddit.com{post['link']}",
@@ -61,9 +77,7 @@ class AITA(commands.Cog):
         embed.set_footer(text=f"{post['upvotes']} upvotes")
         embed.set_author(name=post['author'])
 
-        view = AitaView(post) 
-        await ctx.respond(embed=embed, view=view)
-
+        await ctx.respond(embed=embed, view=AitaView(post))
 
 def setup(bot):
     bot.add_cog(AITA(bot))
