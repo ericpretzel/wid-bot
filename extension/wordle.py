@@ -21,7 +21,6 @@ class Wordle(commands.Cog):
             choices=['normal', 'hard'],
             default='normal'
         )):
-
         await ctx.defer()
         
         self.ensure_not_in_game(ctx)
@@ -29,16 +28,17 @@ class Wordle(commands.Cog):
         game = WordleGame(hard = difficulty=='hard' )
         self.running_games[ctx.author] = game
         
-        await ctx.respond("Game started. Guess a five letter word.")
-
         embed = discord.Embed(title=f'Wordle Game ({difficulty.capitalize()})')
+        keyboard = self.build_keyboard(game)
+
+        await ctx.respond(embeds=[embed, keyboard])
         
-        """
-        Checks messages sent for when the user sends a word for wordle.
-        Also checks for a signal message when a member sends the "quit" command.
-        When this check returns true, the loop below will proceed past the first await.
-        """
         def check(id):
+            """
+            Checks messages sent for when the user sends a word for wordle.
+            Also checks for a signal message when a member sends the "quit" command.
+            When this check returns true, the loop below will proceed past the first await.
+            """
             def inner_check(msg: discord.Message):
                 if msg.author == self.bot.user:
                     return msg.content == self.quit_message(id)
@@ -55,10 +55,15 @@ class Wordle(commands.Cog):
 
                 guess = msg.content.lower().strip()
 
-                ans = ' '.join(game.check(guess))
+                emojis = game.check(guess)
+                
+                keyboard = self.build_keyboard(game)
+                ans = ' '.join(emojis)
+
                 guess = ' '.join([f':regional_indicator_{c}:' for c in guess])
                 embed.add_field(name=guess, value=ans, inline=False)
-                await ctx.edit(embed=embed)
+
+                await ctx.edit(embeds=[embed, keyboard])
             except asyncio.TimeoutError:
                 break # wait_for timed out, so quit the game.
             except InvalidGuessException as e:
@@ -73,7 +78,18 @@ class Wordle(commands.Cog):
             embed.set_footer(text='You lost! Correct answer: ' + game.word)
         elif game.result is None:
             embed.set_footer(text='You took too long to respond! Correct answer: ' + game.word)
-        return await ctx.edit(embed=embed)
+        return await ctx.edit(embed=embed) # gets rid of the keyboard
+
+    def build_keyboard(self, game: WordleGame) -> discord.Embed:
+        """
+        Returns an embed representing the keyboard from the user's game.
+        """
+        embed = discord.Embed(title='Keyboard')
+        for s in ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']:
+            name = ' '.join([f':regional_indicator_{c}:' for c in s])
+            value = ' '.join([game.keyboard[c] for c in s])
+            embed.add_field(name=name, value=value, inline=False)
+        return embed
 
     @slash_command(
         guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
@@ -87,24 +103,6 @@ class Wordle(commands.Cog):
         game.result = False
         await ctx.interaction.channel.send(self.quit_message(ctx.author.id))
         return await ctx.respond('Successfully quit your game.', ephemeral=True)
-    
-    
-    @slash_command(
-        guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
-        description='Shows a QWERTY keyboard of your current wordle letter guesses.'
-    )
-    async def keyboard(self, ctx: discord.ApplicationContext):
-        """
-        Shows keyboard from the user's game.
-        """
-        game = self.ensure_in_game(ctx)
-        embed = discord.Embed(title='Keyboard')
-        for s in ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']:
-            name = ' '.join([f':regional_indicator_{c}:' for c in s])
-            value = ' '.join([game.keyboard[c] for c in s])
-            embed.add_field(name=name, value=value, inline=False)
-        return await ctx.respond(embed=embed, ephemeral=True)
-
     
     def ensure_in_game(self, ctx: discord.ApplicationContext) -> WordleGame:
         """

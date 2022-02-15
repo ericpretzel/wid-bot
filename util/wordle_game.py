@@ -35,7 +35,7 @@ class WordleGame:
         """
         Checks if the guess is valid, then modifies the result of the game and updates the letters that the player has used.
 
-        esult is changed to: 
+        result is changed to: 
         
             - True if game is won
 
@@ -69,9 +69,8 @@ class WordleGame:
                 if prev_emojis[i] == '🟩':
                     if c != prev[i]:
                         raise InvalidGuessException("Hard mode: must use correct letters from previous guesses!")
-                else:
-                    if c in yellow_letters:
-                        yellow_letters.remove(c)
+                elif c in yellow_letters:
+                    yellow_letters.remove(c)
             if len(yellow_letters) > 0:
                 raise InvalidGuessException("Hard mode: must use correct letters from previous guesses!")
         
@@ -93,7 +92,6 @@ class WordleGame:
                 self.keyboard[c] = emojis[i]
         
         return emojis
-
     
     def get_emojis_for(self, guess: str) -> "list[str]":
         """
