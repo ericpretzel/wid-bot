@@ -14,18 +14,24 @@ class Wordle(commands.Cog):
         guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
         description="Play a game of Wordle."
     )
-    async def wordle(self, ctx: discord.ApplicationContext):
-        await ctx.defer()
-        # check if you are already in game
-        if ctx.author in self.running_games:
-            return await ctx.respond('You are already playing a game!', ephemeral=True)
+    async def wordle(self, ctx: discord.ApplicationContext,
+        difficulty: Option(
+            str, 
+            "In hard mode, you must use letters that were guessed correctly in subsequent guesses.",
+            choices=['normal', 'hard'],
+            default='normal'
+        )):
 
-        game = WordleGame()
+        await ctx.defer()
+        
+        self.ensure_not_in_game(ctx)
+
+        game = WordleGame(hard = difficulty=='hard' )
         self.running_games[ctx.author] = game
         
         await ctx.respond("Game started. Guess a five letter word.")
 
-        embed = discord.Embed(title='Wordle Game')
+        embed = discord.Embed(title=f'Wordle Game ({difficulty.capitalize()})')
         
         """
         Checks messages sent for when the user sends a word for wordle.
@@ -39,9 +45,9 @@ class Wordle(commands.Cog):
                 return msg.author == ctx.author and msg.channel == ctx.channel
             return inner_check
 
-        while game.result is None:
+        while game.result is None: # 'None' means the game has not ended yet.
             try:
-                msg = await self.bot.wait_for('message', check=check(ctx.author.id), timeout=180.0)
+                msg = await self.bot.wait_for('message', check=check(ctx.author.id), timeout=300.0)
                 await msg.delete()
                 if msg.author == self.bot.user:
                     # signalled to quit, so make sure it doesn't perform any more game logic
@@ -54,7 +60,7 @@ class Wordle(commands.Cog):
                 embed.add_field(name=guess, value=ans, inline=False)
                 await ctx.edit(embed=embed)
             except asyncio.TimeoutError:
-                break
+                break # wait_for timed out, so quit the game.
             except InvalidGuessException as e:
                 await ctx.respond(e.args[0], ephemeral=True)
                 continue
@@ -69,27 +75,68 @@ class Wordle(commands.Cog):
             embed.set_footer(text='You took too long to respond! Correct answer: ' + game.word)
         return await ctx.edit(embed=embed)
 
-    @wordle.error
-    async def wordle_error(self, ctx, error):
-        return await ctx.respond(error) 
-
-    """
-    Sends a message that the check will pick up to stop the game
-    """
     @slash_command(
         guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
         description='Quit your current Wordle game.'
     )
     async def quit(self, ctx: discord.ApplicationContext):
+        """
+        Sends a message that the check in `wordle()` will pick up to stop the game.
+        """
+        game = self.ensure_in_game(ctx)
+        game.result = False
+        await ctx.interaction.channel.send(self.quit_message(ctx.author.id))
+        return await ctx.respond('Successfully quit your game.', ephemeral=True)
+    
+    
+    @slash_command(
+        guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
+        description='Shows a QWERTY keyboard of your current wordle letter guesses.'
+    )
+    async def keyboard(self, ctx: discord.ApplicationContext):
+        """
+        Shows keyboard from the user's game.
+        """
+        game = self.ensure_in_game(ctx)
+        embed = discord.Embed(title='Keyboard')
+        for s in ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']:
+            name = ' '.join([f':regional_indicator_{c}:' for c in s])
+            value = ' '.join([game.keyboard[c] for c in s])
+            embed.add_field(name=name, value=value, inline=False)
+        return await ctx.respond(embed=embed, ephemeral=True)
+
+    
+    def ensure_in_game(self, ctx: discord.ApplicationContext) -> WordleGame:
+        """
+        Raises an exception if the player is not in a game.
+
+        Handled in `cog_command_error()`.
+        """
         try:
             game = self.running_games[ctx.author]
-            game.result = False
-            await ctx.interaction.channel.send(self.quit_message(ctx.author.id))
-            return await ctx.respond('Successfully quit your game.', ephemeral=True)
         except KeyError:
-            return await ctx.respond('You are not in a game!', ephemeral=True)
-    
-    def quit_message(self, id):
+            raise Exception('You are not in a game!')
+        return game
+
+    def ensure_not_in_game(self, ctx: discord.ApplicationContext) -> None:
+        """
+        Raises an exception if the player is in a game.
+        
+        Handled in `cog_command_error()`.
+        """
+        if ctx.author in self.running_games:
+            raise Exception('You are already in a game!')
+
+    async def cog_command_error(self, ctx: discord.ApplicationContext, error: discord.DiscordException):
+        """
+        Called whenever a command within this cog raises an error.
+        """
+        return await ctx.respond(error.args[0], ephemeral=True)
+
+    def quit_message(self, id: int) -> str:
+        """
+        Message content indicating the player's game should be stopped.
+        """
         return 'Stopping game: ' + str(id)
        
 def setup(bot):
