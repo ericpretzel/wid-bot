@@ -8244,6 +8244,7 @@ presa
 prese
 press
 prest
+pretz
 preve
 prexy
 preys
@@ -11040,6 +11041,7 @@ tines
 tinge
 tings
 tinks
+tinky
 tinny
 tints
 tinty
