@@ -58,8 +58,11 @@ class Wordle(commands.Cog):
                 emojis = game.check(guess)
                 
                 keyboard = self.build_keyboard(game)
-                ans = '\u200c'.join(emojis)
-                guess = '\u200c'.join([f':regional_indicator_{c}:' for c in guess])
+
+                # \u200c is zwsp aka invisible unicode character
+                # used to make emojis not as big on mobile
+                ans = '\u200c '.join(emojis)
+                guess = '\u200c '.join([f':regional_indicator_{c}:' for c in guess])
                 embed.add_field(name=guess, value=ans, inline=False)
 
                 await ctx.edit(embeds=[embed, keyboard])
@@ -85,8 +88,8 @@ class Wordle(commands.Cog):
         """
         embed = discord.Embed(title='Keyboard')
         for s in ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']:
-            name = '\u200c'.join([f':regional_indicator_{c}:' for c in s])
-            value = '\u200c'.join([game.keyboard[c] for c in s])
+            name = '\u200c '.join([f':regional_indicator_{c}:' for c in s])
+            value = '\u200c '.join([game.keyboard[c] for c in s])
             embed.add_field(name=name, value=value, inline=False)
         return embed
 
