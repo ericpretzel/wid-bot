@@ -17,3 +17,6 @@ BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
 # Wordle related
 WORDLE_WORD_LIST = 'data/wordle-word-list.txt'
 FIVE_LETTER_WORDS = 'data/five-letter-words.txt'
+
+# Bad words
+BAD_WORDS = ['henlo']
