@@ -1,4 +1,8 @@
-# wid-bot
+# wid-bot 
+
+[![commits](https://badgen.net/github/commits/ericpretzel/wid-bot/main)](https://github.com/ericpretzel/wid-bot/commit/main)
+[![last-commit](https://badgen.net/github/last-commit/ericpretzel/wid-bot/main)](https://github.com/ericpretzel/wid-bot/last-commit/main)
+
 A Discord bot made in honor of Mr. Widmark. 
 
 Main dependencies:
@@ -10,13 +14,15 @@ Main dependencies:
 
 ## Features
 wid-bot comes with a variety of amazing and fun commands to use, including, but not limited to...
-Command | Description
+Command      | Description
 ------------ | ------------
 `/csgostats` | Retrieve a user's CS:GO stats
-`/wordle` | Play a game of Wordle
-`/aita` | Guess whether a Redditor is TA or not (very hard)
-`/mint` | Mint an NFT on the Widcoin blockchain
+`/wordle`    | Play a game of Wordle
+`/aita`      | Guess whether a Redditor is TA or not (very hard)
+`/mint`      | Mint an NFT on the Widcoin blockchain
 
+## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contribute.
 
 ## Replication
 
@@ -25,40 +31,39 @@ Command | Description
 *Access to the original ("OG") wid-bot application is restricted to members of Widmark Clan only.*
 
 Make a Discord bot account for the application then add it to your server.
-- Enable the "Message content intent."
+- Enable the "Message content intent"
 - Scopes: `applications.commands` and `bot`
-- Recommended permissions integer: **`277028613184`**
+- Recommended permissions integer: `277028613184`
 
-Keep the bot token and reddit info handy.
+Keep the Discord bot token and Reddit secret/ID handy.
 
 2. **Set up the code environment.**
 
 `git clone` this repository, and make sure you have all the above dependencies installed. Pipenv will take care of the rest of them. 
 
-Run the following commands inside the base directory of the project, which will store your  keys in a file named `.env`. This is where sensitive information like the bot token and API keys will go. Replace the values with your own personal values.
+Run the following commands inside the base directory of the project, which will store your  keys in a hidden file named `.env`. This is where sensitive information like the bot token and API keys will go. Replace the values below with your own personal values.
 ```
 $ echo TOKEN=qwertyuiop >> .env
+$ echo GUILD_ID=12345678 >> .env
 $ echo REDDIT_SECRET=asdfghjkl >> .env
 $ echo REDDIT_ID=zxcvbnm >> .env
 ```
-These values are read and set up in `config.py`. You can put them directly in `config.py`, but make sure that those keys are never shared to the public because they can and will be stolen.
+These values are read and set up in [`config.py`](config.py). You can put them directly in the file instead, but make sure that those keys are never shared to the public because they can and will be stolen.
 
-Install [`chromedriver 97.0.4692.71`](https://chromedriver.storage.googleapis.com/index.html?path=97.0.4692.71/) for headless browsing with `selenium`. Either put the binary on the path or in the base project directory. You may also need to install Google Chrome itself.
+Install [`chromedriver 97.0.4692.71`](https://chromedriver.storage.googleapis.com/index.html?path=97.0.4692.71/) for headless browsing with [`selenium`](https://www.selenium.dev/). Either put the binary on PATH or in the base project directory. You may also need to install Google Chrome itself.
 
-Finally, install the dependencies outlined in `Pipfile` and `Pipfile.lock`. 
+Finally, install the dependencies outlined in [`Pipfile`](Pipfile) and [`Pipfile.lock`](Pipfile.lock). 
 ```
 $ pipenv install
 ```
 
 3. **Host and run the bot.**
 
-Use some hosting service to host the code of your bot. There's plenty of options out there.
-
-Install the dependencies outlined in `Pipfile` and `Pipfile.lock`, then run the bot.
+Use some hosting service to host the code of your bot. There's plenty of options out there. If you followed the steps above, wid-bot should be able to run right away.
 ```
 $ pipenv run python3 bot.py
 ``` 
-If everything runs smoothly, it should show something like this:
+If everything works as it should, it should show something like this:
 ```
 Loading .env environment variables…
 wid is loading...
