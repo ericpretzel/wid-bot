@@ -11,7 +11,7 @@ class Wordle(commands.Cog):
         self.running_games = dict()
 
     @slash_command(
-        guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
+        guild_ids=[config.GUILD_ID],
         description="Play a game of Wordle."
     )
     async def wordle(self, ctx: discord.ApplicationContext,
@@ -94,7 +94,7 @@ class Wordle(commands.Cog):
         return embed
 
     @slash_command(
-        guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
+        guild_ids=[config.GUILD_ID],
         description='Quit your current Wordle game.'
     )
     async def quit(self, ctx: discord.ApplicationContext):

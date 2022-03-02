@@ -7,7 +7,7 @@ class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID])
+    @slash_command(guild_ids=[config.GUILD_ID])
     async def shart(self, ctx: discord.ApplicationContext):
         return await ctx.respond('poo')
 
