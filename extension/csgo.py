@@ -21,7 +21,7 @@ class CSGO(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID], 
+    @slash_command(guild_ids=[config.GUILD_ID], 
         description="Retrieve a player's CSGO stats.")
     async def csgostats(self,
         ctx: discord.ApplicationContext,

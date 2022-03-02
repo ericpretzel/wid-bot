@@ -56,7 +56,7 @@ class AITA(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID],
+    @slash_command(guild_ids=[config.GUILD_ID],
         description="Is OP the asshole?")
     async def aita(self, ctx: discord.ApplicationContext):
         try:

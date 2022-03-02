@@ -14,7 +14,7 @@ async def on_ready():
 
 # currently won't work: slash commands cannot be reloaded.
 # hopefully will be changed in the future
-@bot.slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID])
+@bot.slash_command(guild_ids=[config.GUILD_ID])
 @commands.is_owner()
 async def reload(ctx: discord.ApplicationContext, ext: str):
     try:

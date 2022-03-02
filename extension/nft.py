@@ -14,7 +14,7 @@ class Crypto(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID], 
+    @slash_command(guild_ids=[config.GUILD_ID], 
         description="Retrieve a user's NFT wallet.")
     async def wallet(self,
         ctx: discord.ApplicationContext,
@@ -36,7 +36,7 @@ class Crypto(commands.Cog):
         else:
             await ctx.respond(f'{user.nick or user.name} has no NFTs!')
 
-    @slash_command(guild_ids=[config.WIDMARK_CLAN_GUILD_ID], 
+    @slash_command(guild_ids=[config.GUILD_ID], 
         description="Mint an NFT on the Widcoin blockchain.")
     async def mint(self,
         ctx: discord.ApplicationContext):

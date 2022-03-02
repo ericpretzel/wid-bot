@@ -5,8 +5,8 @@ TOKEN = os.environ['TOKEN']
 REDDIT_SECRET = os.environ['REDDIT_SECRET']
 REDDIT_ID = os.environ['REDDIT_ID']
 
-# hard-coded channel/server IDs
-WIDMARK_CLAN_GUILD_ID = 842270794562535434
+# the ID of the server that wid-bot is on
+GUILD_ID = int(os.environ['GUILD_ID'])
 
 # NFT related
 WALLET = 'data/wallet.json'
