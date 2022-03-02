@@ -6,7 +6,7 @@ REDDIT_SECRET = os.environ['REDDIT_SECRET']
 REDDIT_ID = os.environ['REDDIT_ID']
 
 # the ID of the server that wid-bot is on
-GUILD_ID = os.environ['GUILD_ID']
+GUILD_ID = int(os.environ['GUILD_ID'])
 
 # NFT related
 WALLET = 'data/wallet.json'
