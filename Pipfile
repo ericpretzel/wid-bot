@@ -12,6 +12,5 @@ python_version = "3.8"
 requests = "*"
 selenium = "*"
 py-cord = {git = "https://github.com/Pycord-Development/pycord.git", editable = true, ref = "master"}
-numpy = "*"
 pillow = "*"
 asyncpraw = "*"

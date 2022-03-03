@@ -8,7 +8,7 @@ from io import BytesIO
 import discord
 import config
 import json
-from numpy.random import randint
+from random import randint
 import requests
 
 def ensure_wallet(user):
