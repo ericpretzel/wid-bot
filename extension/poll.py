@@ -2,7 +2,7 @@ from datetime import timedelta
 import config
 import discord
 from discord.ext import commands
-from discord.commands import slash_command, Option
+from discord.commands import slash_command, message_command, Option
 from discord.utils import utcnow, format_dt
 
 class Poll(commands.Cog):
@@ -26,9 +26,21 @@ class Poll(commands.Cog):
             name='hours',
             min_value=0.25, max_value=24.0, default=12.0
         )):
-        view_timeout *= 60*60 # convert to seconds
-        modal = PollModal(num_options, view_timeout)
+        # convert view_timeout from hours to seconds
+        modal = PollModal(num_options, view_timeout * 60 * 60)
         await ctx.interaction.response.send_modal(modal)
+    
+    @message_command(
+        name='End Poll',
+        guild_ids=[config.GUILD_ID]
+    )
+    async def end_poll(self, ctx: discord.ApplicationContext, msg: discord.Message):
+        """
+        End the poll early
+        """
+        view = discord.ui.View.from_message(msg)
+        # TODO do stuff
+        await ctx.respond('Done', ephemeral=True)
 
 class PollModal(discord.ui.Modal):
     """
@@ -47,7 +59,7 @@ class PollModal(discord.ui.Modal):
                 style=discord.InputTextStyle.short,
                 placeholder="Option",
                 label=label,
-                max_length=50
+                max_length=25
             )
             self.add_item(item)
 
@@ -58,8 +70,8 @@ class PollModal(discord.ui.Modal):
         topic = self.children[0].value
         options = [c.value for c in self.children[1:]]
         view = PollView(topic, options, self.view_timeout)
-        interaction = await ctx.response.send_message(view=view, embed=view.embed)
-        view.message = await interaction.original_message()
+        await ctx.response.send_message(view=view, embed=view.embed)
+        view.message = await ctx.original_message()
 
 class PollButton(discord.ui.Button):
     """
@@ -67,6 +79,7 @@ class PollButton(discord.ui.Button):
     Updates the PollView via `update_votes()`.
     """
     async def callback(self, ctx: discord.Interaction):
+        await ctx.response.defer()
         view: PollView = self.view
         await view.update_votes(ctx, self.custom_id)
 
@@ -80,7 +93,8 @@ class PollView(discord.ui.View):
         self.message: discord.InteractionMessage = None # this value will be updated immediately in PollModal callback
         self.votes = dict()
 
-        expiration = utcnow() + timedelta(seconds=self.timeout) 
+        now = utcnow()
+        expiration = now + timedelta(seconds=timeout) 
         self.embed = discord.Embed(
             title=f"Poll (until {format_dt(expiration)})",
             description=f'**{topic}**',
@@ -88,7 +102,7 @@ class PollView(discord.ui.View):
         )
 
         for i, opt in enumerate(options):
-            button = PollButton(label=opt, custom_id=f'poll_opt_{str(i)}', style=discord.ButtonStyle.blurple)
+            button = PollButton(label=opt, custom_id=f'{int(now.timestamp())}_poll_opt_{i}', style=discord.ButtonStyle.blurple)
             self.add_item(button)
             self.votes[button.custom_id] = list()
         
@@ -112,20 +126,26 @@ class PollView(discord.ui.View):
         
         self.update_embed()
 
-        await ctx.response.edit_message(view=self, embed=self.embed)
+        await self.message.edit(view=self, embed=self.embed)
     
     def update_embed(self):
         """
         Updates the embed attached to this view.
         """
         self.embed.clear_fields()
-        
+
+        total_votes = sum(map(len, self.votes.values())) or 1 # avoid div by 0
+
         option: PollButton # for type hinting
         for option in self.children:
-            users = self.votes[option.custom_id]
+            u = self.votes[option.custom_id][:10]
+            users = ', '.join(u) if len(u) > 0 else 'No votes'
+            percent = len(u) / total_votes
+            bar = ('█' * round(percent*20) ).ljust(20, '░')
+            
             self.embed.add_field(
-                name=f'{option.label} - {len(users)}',
-                value=', '.join(users) if len(users) > 0 else 'No votes',
+                name=f'{option.label} - {len(u)}',
+                value=f'{bar} - {round(percent*100)}%\n{users}',
                 inline=False
             )
     
@@ -133,13 +153,17 @@ class PollView(discord.ui.View):
         """
         Edits the message to show the winning choice(s).
         """
+        # disable buttons
+        button:PollButton
+        for button in self.children:
+            button.disabled = True
         # find winner(s)
         maxlen = max(map(len, self.votes.values()))
         winners = [i for i, opt in enumerate(self.votes) if len(self.votes[opt]) == maxlen and maxlen > 0]
         # display winner(s)
         self.embed.set_footer(text='Poll Result: ' + (', '.join([self.children[i].label for i in winners]) if maxlen > 0 else 'None'))
-        await self.message.edit(embed=self.embed)
         self.stop() # the view will now stop listening to interactions/new votes
+        await self.message.edit(view=self, embed=self.embed)
         
 def setup(bot):
     bot.add_cog(Poll(bot))
