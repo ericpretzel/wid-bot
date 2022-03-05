@@ -101,14 +101,14 @@ class PollView(discord.ui.View):
         # check whether the user is adding, changing, or cancelling their vote
         cancelling = False
         for option_id, users in self.votes.items():
-            if ctx.user.display_name in users:
-                users.remove(ctx.user.display_name)
+            if ctx.user.name in users:
+                users.remove(ctx.user.name)
                 cancelling = option_id == id
                 break
         if not cancelling:
             # user is adding or changing their vote
             users = self.votes[id]
-            users.append(ctx.user.display_name)
+            users.append(ctx.user.name)
         
         self.update_embed()
 
