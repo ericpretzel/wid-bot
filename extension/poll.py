@@ -24,7 +24,7 @@ class Poll(commands.Cog):
             float,
             "Length (in hours) the poll should last",
             name='hours',
-            min_value=0.5, max_value=24, default=12
+            min_value=0.25, max_value=24.0, default=12.0
         )):
         view_timeout *= 60*60 # convert to seconds
         modal = PollModal(num_options, view_timeout)
@@ -43,7 +43,12 @@ class PollModal(discord.ui.Modal):
         self.add_item(topic)
         for i in range(num_options):
             label = f'Option #{i+1}'
-            item = discord.ui.InputText(style=discord.InputTextStyle.short, placeholder="Option", label=label, max_length=50)
+            item = discord.ui.InputText(
+                style=discord.InputTextStyle.short,
+                placeholder="Option",
+                label=label,
+                max_length=50
+            )
             self.add_item(item)
 
     async def callback(self, ctx: discord.Interaction):
@@ -72,13 +77,15 @@ class PollView(discord.ui.View):
     """
     def __init__(self, topic, options, timeout):
         super().__init__(timeout=timeout)
-        # why doesn't discord.ui.View have a message attribute? Why???
         self.message: discord.InteractionMessage = None # this value will be updated immediately in PollModal callback
+        self.votes = dict()
 
         expiration = utcnow() + timedelta(seconds=self.timeout) 
-        self.embed = discord.Embed(title=f"Poll (until {format_dt(expiration)})", description=f'**{topic}**') \
-        
-        self.votes = dict()
+        self.embed = discord.Embed(
+            title=f"Poll (until {format_dt(expiration)})",
+            description=f'**{topic}**',
+            color=discord.Color.random()
+        )
 
         for i, opt in enumerate(options):
             button = PollButton(label=opt, custom_id=f'poll_opt_{str(i)}', style=discord.ButtonStyle.blurple)
@@ -91,14 +98,18 @@ class PollView(discord.ui.View):
         """
         Called when a user votes for an option by pressing a PollButton attached to this view.
         """
-        # check if the user is changing their vote
-        for users in self.votes.values():
+        # check whether the user is adding, changing, or cancelling their vote
+        cancelling = False
+        for option_id, users in self.votes.items():
             if ctx.user.display_name in users:
                 users.remove(ctx.user.display_name)
+                cancelling = option_id == id
                 break
+        if not cancelling:
+            # user is adding or changing their vote
+            users = self.votes[id]
+            users.append(ctx.user.display_name)
         
-        users = self.votes[id]
-        users.append(ctx.user.display_name)
         self.update_embed()
 
         await ctx.response.edit_message(view=self, embed=self.embed)
@@ -112,8 +123,11 @@ class PollView(discord.ui.View):
         option: PollButton # for type hinting
         for option in self.children:
             users = self.votes[option.custom_id]
-            name = f'{option.label}: {str(len(users))}'
-            self.embed.add_field(name=name, value=', '.join(users) if len(users) > 0 else 'No votes', inline=False)
+            self.embed.add_field(
+                name=f'{option.label} - {len(users)}',
+                value=', '.join(users) if len(users) > 0 else 'No votes',
+                inline=False
+            )
     
     async def on_timeout(self):
         """
@@ -125,7 +139,7 @@ class PollView(discord.ui.View):
         # display winner(s)
         self.embed.set_footer(text='Poll Result: ' + (', '.join([self.children[i].label for i in winners]) if maxlen > 0 else 'None'))
         await self.message.edit(embed=self.embed)
-        self.stop()
+        self.stop() # the view will now stop listening to interactions/new votes
         
 def setup(bot):
     bot.add_cog(Poll(bot))
