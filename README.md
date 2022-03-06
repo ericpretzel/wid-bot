@@ -67,6 +67,7 @@ If everything works as it should, it should show something like this:
 ```
 Loading .env environment variables…
 wid is loading...
+loading extension.[filename]... done (for all files in extension folder)
 wid is ready!
 ```
 and the bot should be online. Woo!
