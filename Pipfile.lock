@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "af47c82826eea29c47dfbcdc8cb19d748448b1287fcd9af0cf77649d96167b4c"
+            "sha256": "685e6201c9b8d80140a23028a57059adc53d17009f61ec365e6a22d945658f56"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.8"
+            "python_version": "3.9"
         },
         "sources": [
             {
@@ -231,7 +231,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "cryptography": {
@@ -457,7 +457,7 @@
         "py-cord": {
             "editable": true,
             "git": "https://github.com/Pycord-Development/pycord.git",
-            "ref": "f4b0d07388d2a4bd6ca98b3b10a9cab7d64ca34e"
+            "ref": "085d6931c40cdc2a06be1d8b570e5b01f25bfc97"
         },
         "pycparser": {
             "hashes": [
@@ -543,7 +543,6 @@
             "version": "==0.18.0"
         },
         "urllib3": {
-            "extras": [],
             "hashes": [
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"

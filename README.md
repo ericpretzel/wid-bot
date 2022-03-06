@@ -6,7 +6,7 @@
 A Discord bot made in honor of Mr. Widmark. 
 
 Main dependencies:
-- [Python 3.8](https://www.python.org/downloads/)
+- [Python 3.9](https://www.python.org/downloads/)
 - [Pipenv](https://pipenv.pypa.io/en/latest/) - used to manage misc. dependencies and run the bot
 - [Pycord](https://github.com/Pycord-Development/pycord) - a [discord.py](https://github.com/Rapptz/discord.py) fork for interacting with the Discord API
 - [Async PRAW](https://github.com/praw-dev/asyncpraw) - interacting with the Reddit API
