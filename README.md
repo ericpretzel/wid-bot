@@ -33,7 +33,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contrib
 Make a Discord bot account for the application then add it to your server.
 - Enable the "Message content intent"
 - Scopes: `applications.commands` and `bot`
-- Recommended permissions integer: `277028613184`
+- Recommended permissions integer: `415038303296`
 
 Keep the Discord bot token and Reddit secret/ID handy.
 
