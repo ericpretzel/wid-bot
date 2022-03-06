@@ -5,7 +5,7 @@ import os
 
 print('wid is loading...')
 
-bot = commands.Bot()
+bot = commands.Bot(intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
