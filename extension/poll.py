@@ -22,25 +22,14 @@ class Poll(commands.Cog):
         ),
         view_timeout: Option(
             float,
-            "Length (in hours) the poll should last",
-            name='hours',
-            min_value=0.25, max_value=24.0, default=12.0
+            "Length (in minutes) the poll should last",
+            name='minutes',
+            min_value=1, max_value=24*60, default=60
         )):
-        # convert view_timeout from hours to seconds
-        modal = PollModal(num_options, view_timeout * 60 * 60)
-        await ctx.interaction.response.send_modal(modal)
-    
-    @message_command(
-        name='End Poll',
-        guild_ids=[config.GUILD_ID]
-    )
-    async def end_poll(self, ctx: discord.ApplicationContext, msg: discord.Message):
-        """
-        End the poll early
-        """
-        view = discord.ui.View.from_message(msg)
-        # TODO do stuff
-        await ctx.respond('Done', ephemeral=True)
+        # convert view_timeout from minutes to seconds
+        modal = PollModal(num_options, view_timeout * 60)
+        #modal = PollModal(num_options, 10)
+        await ctx.send_modal(modal)
 
 class PollModal(discord.ui.Modal):
     """
@@ -70,8 +59,9 @@ class PollModal(discord.ui.Modal):
         topic = self.children[0].value
         options = [c.value for c in self.children[1:]]
         view = PollView(topic, options, self.view_timeout)
-        await ctx.response.send_message(view=view, embed=view.embed)
-        view.message = await ctx.original_message()
+        await ctx.response.send_message('Poll created.', ephemeral=True)
+        msg = await ctx.channel.send(view=view, embed=view.embed)
+        view.message = msg
 
 class PollButton(discord.ui.Button):
     """
@@ -81,7 +71,12 @@ class PollButton(discord.ui.Button):
     async def callback(self, ctx: discord.Interaction):
         await ctx.response.defer()
         view: PollView = self.view
-        await view.update_votes(ctx, self.custom_id)
+        # manually check if the time is up and poll should be done
+        # because on_timeout is incredibly unreliable for some reason :)
+        if utcnow() > view.expiration:
+            await view.end_poll()
+        else: 
+            await view.update_votes(ctx, self.custom_id)
 
 class PollView(discord.ui.View):
     """
@@ -94,9 +89,9 @@ class PollView(discord.ui.View):
         self.votes = dict()
 
         now = utcnow()
-        expiration = now + timedelta(seconds=timeout) 
+        self.expiration = now + timedelta(seconds=timeout) 
         self.embed = discord.Embed(
-            title=f"Poll (until {format_dt(expiration)})",
+            title=f"Poll (until {format_dt(self.expiration)})",
             description=f'**{topic}**',
             color=discord.Color.random()
         )
@@ -138,8 +133,9 @@ class PollView(discord.ui.View):
 
         option: PollButton # for type hinting
         for option in self.children:
-            u = self.votes[option.custom_id][:10]
-            users = ', '.join(u) if len(u) > 0 else 'No votes'
+            u = self.votes[option.custom_id]
+            # show only first 10 users
+            users = ', '.join(u[:10]) if len(u) > 0 else 'No votes'
             percent = len(u) / total_votes
             bar = ('█' * round(percent*20) ).ljust(20, '░')
             
@@ -149,10 +145,7 @@ class PollView(discord.ui.View):
                 inline=False
             )
     
-    async def on_timeout(self):
-        """
-        Edits the message to show the winning choice(s).
-        """
+    async def end_poll(self):
         # disable buttons
         button:PollButton
         for button in self.children:
@@ -164,6 +157,9 @@ class PollView(discord.ui.View):
         self.embed.set_footer(text='Poll Result: ' + (', '.join([self.children[i].label for i in winners]) if maxlen > 0 else 'None'))
         self.stop() # the view will now stop listening to interactions/new votes
         await self.message.edit(view=self, embed=self.embed)
+
+    async def on_timeout(self) -> None:
+        await self.end_poll()
         
 def setup(bot):
     bot.add_cog(Poll(bot))
