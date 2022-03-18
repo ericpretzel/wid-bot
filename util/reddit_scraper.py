@@ -55,7 +55,7 @@ async def get_subreddit_drama():
     r = asyncpraw.Reddit(user_agent=USER_AGENT,client_id=config.REDDIT_ID,client_secret=config.REDDIT_SECRET)
     subreddit_drama = await r.subreddit('SubredditDrama')
     posts = [post async for post in subreddit_drama.hot(limit=DRAMA_POST_LIMIT)]
-    post = posts[[random.randint(0, DRAMA_POST_LIMIT)]]
+    post = posts[random.randint(0, DRAMA_POST_LIMIT)]
     while (post.stickied): post = posts[random.randint(0, DRAMA_POST_LIMIT)]
 
     post.comment_sort = "top"
