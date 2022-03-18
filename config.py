@@ -8,12 +8,19 @@ REDDIT_ID = os.environ['REDDIT_ID']
 # the ID of the server that wid-bot is on
 GUILD_ID = int(os.environ['GUILD_ID'])
 
+# folder that all data files are stored in
+DATA_FOLDER = 'data'
+
 # NFT related
-WALLET = 'data/wallet.json'
+WALLET = os.path.join(DATA_FOLDER, 'wallet.json')
 NFT_SIZE = 600
 PREFIX = 'https://ipfs.io/ipfs/'
 BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
 
 # Wordle related
-WORDLE_WORD_LIST = 'data/wordle-word-list.txt'
-FIVE_LETTER_WORDS = 'data/five-letter-words.txt'
+WORDLE_WORD_LIST = os.path.join(DATA_FOLDER, 'wordle-word-list.txt')
+FIVE_LETTER_WORDS = os.path.join(DATA_FOLDER, 'five-letter-words.txt')
+
+# Default emoji mappings found here: 
+# https://raw.githubusercontent.com/Kevinpgalligan/EmojipastaBot/master/src/emojipasta/data/emoji-mappings.json
+EMOJI_MAPPINGS = os.path.join(DATA_FOLDER, 'emoji-mappings.json')
