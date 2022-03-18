@@ -49,3 +49,14 @@ async def get_aita():
 
     await r.close()
     return submission
+
+async def get_subreddit_drama():
+    r = asyncpraw.Reddit(user_agent=USER_AGENT,client_id=config.REDDIT_ID,client_secret=config.REDDIT_SECRET)
+    subreddit_drama = await r.subreddit('SubredditDrama')
+    posts = [post async for post in subreddit_drama.hot(limit=POST_LIMIT)]
+    post = posts[[random.randint(0, POST_LIMIT)]]
+    while (post.stickied): post = posts[random.randint(0, POST_LIMIT)]
+
+    post.comment_sort = "top"
+    await post.load()
+    await post.comments.replace_more(limit=0)
