@@ -12,7 +12,7 @@ from discord.ext import commands
 from discord.ui import Button, View
 from discord import ButtonStyle
 from discord.commands import slash_command
-from util.reddit_scraper import get_aita
+from util.reddit_scraper import get_subreddit_drama
 
 class DramaView(View):
     def __init__(self, post):
