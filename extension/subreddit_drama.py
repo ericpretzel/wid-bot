@@ -25,10 +25,10 @@ class DRAMA(commands.Cog):
 
     @slash_command(guild_ids=[config.GUILD_ID],
         description="What's the latest drama on Reddit?")
-    async def aita(self, ctx: discord.ApplicationContext):
+    async def subreddit_drama(self, ctx: discord.ApplicationContext):
         try:
             await ctx.defer()
-            post = await get_aita()
+            post = await get_subreddit_drama()
         except Exception as e:
             return await ctx.respond('Unable to find a spicy story :/', ephemeral=True)  
         
