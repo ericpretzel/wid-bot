@@ -9,7 +9,7 @@ class Admin(commands.Cog):
 
     @slash_command(guild_ids=[config.GUILD_ID])
     async def shart(self, ctx: discord.ApplicationContext):
-        return await ctx.respond('poo')
+       return await ctx.respond('poo')
 
 def setup(bot):
     bot.add_cog(Admin(bot))

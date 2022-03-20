@@ -25,9 +25,15 @@ class Poll(commands.Cog):
             "Length (in minutes) the poll should last",
             name='minutes',
             min_value=1, max_value=24*60, default=60
+        ),
+        anonymous: Option(
+            str,
+            "Whether or not to hide people's votes",
+            choices=['true', 'false'],
+            default='false'
         )):
         # convert view_timeout from minutes to seconds
-        modal = PollModal(num_options, view_timeout * 60)
+        modal = PollModal(num_options, view_timeout * 60, anonymous)
         #modal = PollModal(num_options, 10)
         await ctx.send_modal(modal)
 
@@ -36,9 +42,10 @@ class PollModal(discord.ui.Modal):
     Represents a modal dialogue for a user to create a poll.
     The poll is then displayed to the channel in a PollView.
     """
-    def __init__(self, num_options, view_timeout):
+    def __init__(self, num_options, view_timeout, anonymous):
         super().__init__('Create Poll')
         self.view_timeout = view_timeout
+        self.anonymous = anonymous
 
         topic = discord.ui.InputText(style=discord.InputTextStyle.short, placeholder='Topic', label='Topic')
         self.add_item(topic)
@@ -58,7 +65,7 @@ class PollModal(discord.ui.Modal):
         """
         topic = self.children[0].value
         options = [c.value for c in self.children[1:]]
-        view = PollView(topic, options, self.view_timeout)
+        view = PollView(topic, options, self.view_timeout, self.anonymous)
         await ctx.response.send_message('Poll created.', ephemeral=True)
         msg = await ctx.channel.send(view=view, embed=view.embed)
         view.message = msg
@@ -83,15 +90,16 @@ class PollView(discord.ui.View):
     Represents a poll. Contains PollButtons that the users press to cast their vote.
     Keeps track of votes and updates when users vote.
     """
-    def __init__(self, topic, options, timeout):
+    def __init__(self, topic, options, timeout, anonymous):
         super().__init__(timeout=timeout)
         self.message: discord.InteractionMessage = None # this value will be updated immediately in PollModal callback
         self.votes = dict()
+        self.anonymous = anonymous
 
         now = utcnow()
         self.expiration = now + timedelta(seconds=timeout) 
         self.embed = discord.Embed(
-            title=f"Poll (until {format_dt(self.expiration)})",
+            title=("" if anonymous == 'false' else "Anonymous ") + f"Poll (until {format_dt(self.expiration)})",
             description=f'**{topic}**',
             color=discord.Color.random()
         )
@@ -136,6 +144,8 @@ class PollView(discord.ui.View):
             u = self.votes[option.custom_id]
             # show only first 10 users
             users = ', '.join(u[:10]) if len(u) > 0 else 'No votes'
+            if (self.anonymous == 'true'):
+                users = ''
             percent = len(u) / total_votes
             bar = ('█' * round(percent*20) ).ljust(20, '░')
             

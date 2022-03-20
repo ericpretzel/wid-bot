@@ -29,6 +29,11 @@ class Fun(commands.Cog):
             await msg.add_reaction(emoji='😂')
             await ctx.interaction.response.send_message('Done', ephemeral=True)
 
+    @slash_command(guild_ids=[config.GUILD_ID], 
+        description='Holy fax')
+    async def hf(self, ctx: discord.ApplicationContext):
+        return await ctx.respond('Holy fax')
+
 def setup(bot):
     # load emojis from file
     with open(config.EMOJI_MAPPINGS) as f:
