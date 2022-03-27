@@ -2,7 +2,7 @@ import asyncio
 import config
 import discord
 from discord.ext import commands
-from discord.commands import slash_command, Option
+from discord.commands import Option
 from util.wordle_game import InvalidGuessException, WordleGame
 
 class Wordle(commands.Cog):
@@ -10,11 +10,12 @@ class Wordle(commands.Cog):
         self.bot = bot
         self.running_games = dict()
 
-    @slash_command(
-        guild_ids=[config.GUILD_ID],
+    wordle_group = discord.SlashCommandGroup("wordle", "Commands related to Wordle", guild_ids=[config.GUILD_ID])
+
+    @wordle_group.command(
         description="Play a game of Wordle."
     )
-    async def wordle(self, ctx: discord.ApplicationContext,
+    async def start(self, ctx: discord.ApplicationContext,
         difficulty: Option(
             str, 
             "In hard mode, you must use letters that were guessed correctly in subsequent guesses.",
@@ -25,7 +26,7 @@ class Wordle(commands.Cog):
         
         self.ensure_not_in_game(ctx)
 
-        game = WordleGame(hard = difficulty=='hard' )
+        game = WordleGame(hard = difficulty=='hard')
         self.running_games[ctx.author] = game
         
         embed = discord.Embed(title=f'Wordle Game ({difficulty.capitalize()})')
@@ -93,8 +94,7 @@ class Wordle(commands.Cog):
             embed.add_field(name=name, value=value, inline=False)
         return embed
 
-    @slash_command(
-        guild_ids=[config.GUILD_ID],
+    @wordle_group.command(
         description='Quit your current Wordle game.'
     )
     async def quit(self, ctx: discord.ApplicationContext):

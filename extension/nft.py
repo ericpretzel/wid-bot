@@ -6,7 +6,6 @@ Infrastructure for the Widmark Clan crypto branch NFT exchange
 
 import config
 import discord
-from discord.commands import slash_command
 from discord.ext import commands
 from util.smart_contract import ensure_wallet, mint_nft, nft, show, own_nft
 
@@ -14,8 +13,9 @@ class Crypto(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=[config.GUILD_ID], 
-        description="Retrieve a user's NFT wallet.")
+    nft_group = discord.SlashCommandGroup('nft', 'Commands related to NFTs', guild_ids=[config.GUILD_ID])
+
+    @nft_group.command(description="Retrieve a user's NFT wallet.")
     async def wallet(self,
         ctx: discord.ApplicationContext,
         user:  discord.Member=None, nft_id: int=None):
@@ -36,8 +36,7 @@ class Crypto(commands.Cog):
         else:
             await ctx.respond(f'{user.nick or user.name} has no NFTs!')
 
-    @slash_command(guild_ids=[config.GUILD_ID], 
-        description="Mint an NFT on the Widcoin blockchain.")
+    @nft_group.command(description="Mint an NFT on the Widcoin blockchain.")
     async def mint(self,
         ctx: discord.ApplicationContext):
         await ctx.defer()
