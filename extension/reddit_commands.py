@@ -77,6 +77,11 @@ class AITA(commands.Cog):
 
         await ctx.respond(embed=embed, view=AitaView(post))
 
+
+
+
+
+
 class DramaView(View):
     def __init__(self, post):
         super().__init__()
@@ -107,6 +112,9 @@ class DRAMA(commands.Cog):
         embed.set_author(name=post['author'])
 
         await ctx.respond(embed=embed, view=DramaView(post))
+
+
+
 
 
 def setup(bot):
