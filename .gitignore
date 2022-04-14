@@ -130,3 +130,7 @@ dmypy.json
 
 # NFT wallet
 wallet.json
+
+# Demons data (except for placeholder file)
+data/demons/*
+!data/demons/README.md
