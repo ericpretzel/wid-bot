@@ -1,8 +1,9 @@
 import config
 import discord
 from discord.ext import commands
-from discord.commands import user_command
-import markovify
+from discord.commands import user_command, slash_command, permissions
+from discord.utils import escape_mentions
+import util.demon_manager as dm
 
 class Demons(commands.Cog):
     def __init__(self, bot):
@@ -10,27 +11,45 @@ class Demons(commands.Cog):
 
     @user_command(name="Unleash Demons", guild_ids=[config.GUILD_ID])
     async def demons(self, ctx: discord.ApplicationContext, mem: discord.Member):
-        await ctx.defer()
-        messages = await self.gather_messages_from(mem)
+        message = f"**{mem.display_name}'s demons:**\n"
+        message += dm.generate_sentences(ctx.guild_id, mem.id, 15)
+        message = escape_mentions(message)
+        if len(message) > 2000:
+            message = message[:2000-3] + '...'
+        await ctx.respond(message)
 
-        text = '\n'.join(messages)
-        model = markovify.NewlineText(text, well_formed=False)
-        
-        sentences = '. '.join(model.make_short_sentence(max_chars=1750//15, test_output=False) for _ in range(15))
-        print(sentences)
-        await ctx.respond(f"{mem.display_name}'s demons: {sentences}")
+    @slash_command(
+        description="Begin the ritual.",
+        guild_ids=[config.GUILD_ID]
+    )
+    @permissions.is_owner()
+    async def summon_demons(self, ctx: discord.ApplicationContext):
+        """
+        Fetches every single message from the server.
+        EXTREMELY TIME CONSUMING.
+        """
 
-    async def gather_messages_from(self, mem: discord.Member):
-        messages = list()
-        guild = mem.guild
+        await ctx.respond("The ritual has begun.", ephemeral=True)
+        messages_parsed = 0
+        guild = ctx.guild
+        print(f'Gathering data from guild {guild.id}...')
+        data = dict()
         for channel in guild.text_channels:
-            async for message in channel.history(limit=666) \
-            .filter(lambda msg: msg.author == mem) \
-            .filter(lambda msg: len(msg.content) > 10):
-                messages.append(message.content)
-        return messages
-
-
+            async for message in channel.history(limit = None) \
+                .filter(lambda msg: len(msg.content) > 6) \
+                .filter(lambda msg: not msg.content.startswith('http')) \
+                .filter(lambda msg: not msg.content.startswith(':')):
+                user_id = message.author.id
+                if user_id not in data:
+                    data[user_id] = list()
+                data[user_id].append(message.content)
+                messages_parsed += 1
+                if messages_parsed % 100 == 0:
+                    print(f'messages_parsed: {messages_parsed}')
+                    print(f'current message: {message.content}')
+        print('Done gathering. Generating report.')
+        dm.generate_demon_report(guild.id, data)
+        print('Report generated!')
 
 
 def setup(bot):
