@@ -24,3 +24,6 @@ FIVE_LETTER_WORDS = os.path.join(DATA_FOLDER, 'five-letter-words.txt')
 # Default emoji mappings found here: 
 # https://raw.githubusercontent.com/Kevinpgalligan/EmojipastaBot/master/src/emojipasta/data/emoji-mappings.json
 EMOJI_MAPPINGS = os.path.join(DATA_FOLDER, 'emoji-mappings.json')
+
+# Demons storage
+DEMONS_FOLDER = os.path.join(DATA_FOLDER, 'demons', )
