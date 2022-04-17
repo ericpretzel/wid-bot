@@ -16,3 +16,4 @@ asyncpraw = "*"
 markovify = "*"
 py-cord = {version = "==2.0.0b7", extras = ["voice"]}
 pynacl = "*"
+youtube-dl = "*"
