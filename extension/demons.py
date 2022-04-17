@@ -12,7 +12,10 @@ class Demons(commands.Cog):
     @user_command(name="Unleash Demons", guild_ids=[config.GUILD_ID])
     async def demons(self, ctx: discord.ApplicationContext, mem: discord.Member):
         message = f"**{mem.display_name}'s demons:**\n"
-        message += dm.generate_sentences(ctx.guild_id, mem.id, 15)
+        try:
+            message += dm.generate_sentences(ctx.guild_id, mem.id, 15)
+        except dm.ModelNotFoundException:
+            return await ctx.respond('These demons have not been summoned yet...', ephemeral=True)
         message = escape_mentions(message)
         if len(message) > 2000:
             message = message[:2000-3] + '...'
