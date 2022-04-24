@@ -17,6 +17,7 @@ markovify = "*"
 py-cord = {version = "==2.0.0b7", extras = ["voice"]}
 pynacl = "*"
 youtube-dl = "*"
+youtube-search-python = "*"
 
 [scripts]
 bot = "python3 bot.py"
