@@ -11,11 +11,16 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 # folder that all data files are stored in
 DATA_FOLDER = 'data'
 
+# Persistent data storage
+DB_FILE = 'config.db'
+
 # NFT related
-WALLET = os.path.join(DATA_FOLDER, 'wallet.json')
 NFT_SIZE = 600
-PREFIX = 'https://ipfs.io/ipfs/'
-BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
+INFURA_GATEWAY = os.environ['INFURA_GATEWAY']
+BASE_URL = 'https://cdn.discordapp.com/attachments/915513848059027457/945195853725978644/unknown.png'
+CONTRACT_ADDRESS = 'FIXME'
+ABI = {}
+MORALIS_KEY = os.environ['MORALIS_KEY']
 
 # Wordle related
 WORDLE_WORD_LIST = os.path.join(DATA_FOLDER, 'wordle-word-list.txt')
