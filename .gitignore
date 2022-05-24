@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Legacy NFT data
-.json
+wallet.json
 
 # NFT wallets
 .db
