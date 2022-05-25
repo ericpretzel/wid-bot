@@ -5,7 +5,6 @@ Prototype smart contract for the first Widcoin-based NFT collection
 """
 from unittest import result
 from PIL import Image, ImageChops
-from io import BytesIO
 import discord
 import config
 import sqlite3
@@ -13,6 +12,7 @@ import web3
 from web3 import Web3
 from random import randint
 import requests
+import base64
 
 def gen_img():
     """
@@ -37,14 +37,19 @@ def get_address(id):
         print(e)
         return None
 
-def mint_nft(addr, url):
+def mint_nft(addr, img_url):
     """
     Mints an NFT on the Ethereum blockchain with the given image and transfers to given user
     """
-    pass
-    # w3 = Web3(Web3.HTTPProvider(config.INFURA_GATEWAY))
-    # contract = w3.eth.contract(address=config.CONTRACT_ADDRESS, abi=config.ABI)
-    # contract.functions.mint(addr, url).transact()
+    uri = 'data:application/json;base64,' \
+        + base64.b64encode(bytes('{"name": "wid","description": "Widmark NFTs","image": "' \
+          + img_url + '"}', 'utf8')).decode('ascii')
+    w3 = Web3(Web3.HTTPProvider(config.INFURA_GATEWAY))
+    contract = w3.eth.contract(address=config.CONTRACT_ADDRESS, abi=config.ABI)
+    tx = contract.functions.safeMint(uri, addr)\
+        .buildTransaction({'nonce': w3.eth.getTransactionCount(config.WID_ADDR)})
+    signed_tx = w3.eth.account.signTransaction(tx, private_key=config.PRIVATE_KEY)
+    w3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
 def get_last_nft(address):
     """

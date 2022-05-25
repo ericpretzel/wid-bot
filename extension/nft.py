@@ -31,10 +31,9 @@ class Crypto(commands.Cog):
         w3 = Web3(Web3.HTTPProvider(config.INFURA_GATEWAY))
 
         try:
-            pass
             bal = Web3.fromWei(w3.eth.get_balance(address), 'ether')
         except web3.exceptions.InvalidAddress:
-            await ctx.respond('Invalid Metamask address!')
+            await ctx.respond('Invalid Metamask address!', ephemeral=True)
             return
 
         try:
@@ -49,17 +48,18 @@ class Crypto(commands.Cog):
             con.commit()
         except Exception as e:
             print(e)
-            await ctx.respond('A skill issue prevented address storage')
+            await ctx.respond('A skill issue prevented address storage', ephemeral=True)
             return
-        await ctx.respond('Address successfully recorded!')
+        await ctx.respond('Address successfully recorded!', ephemeral=True)
 
     @nft_group.command(description="Mint an NFT on the Widcoin blockchain.")
     async def mint(self, ctx: discord.ApplicationContext):
         global counter
         address = get_address(ctx.author.id)
-        # if address is None:
-        #     await ctx.respond('Connect your wallet to Wid first!')
-        #     return
+        if address is None:
+            await ctx.respond('Connect your wallet to Wid first!', ephemeral=True)
+            return
+
         try:
             img = gen_img()
             counter += 1
@@ -69,12 +69,14 @@ class Crypto(commands.Cog):
                 imgFile = discord.File(fp=export, filename=f'{counter}.png')
             preview = discord.Embed(title='NFT Preview')
             preview.set_image(url=f'attachment://{counter}.png')
-            preview.set_footer(text='Minting...')
+            preview.description = 'Minting...'
             msg = await ctx.respond(embed=preview, file=imgFile)
 
         except Exception as e:
             print(e)
-            await ctx.respond('A skill issue prevented NFT generation')
+            msg_content = await msg.original_message()
+            await msg_content.delete()
+            await ctx.respond('A skill issue prevented NFT generation', ephemeral=True)
             return
 
         try:
@@ -82,11 +84,13 @@ class Crypto(commands.Cog):
             img_url = msg_content.embeds[0].image.url
             mint_nft(address, img_url)
             preview.title = f'{ctx.author.nick or ctx.author.name}\'s new NFT!'
-            preview.set_footer(text='address here')
+            etherscan_url = f'https://ropsten.etherscan.io/address/{address}'
+            preview.description = f'[{address}]({etherscan_url})'
             await msg.edit_original_message(embed=preview)
         except Exception as e:
             print(e)
-            await ctx.respond('A skill issue prevented the minting of an NFT')
+            await msg_content.delete()
+            await ctx.respond('A skill issue prevented NFT generation', ephemeral=True)
 
     @nft_group.command(description="Retrieve specified NFT or user's latest NFT (Ropsten only).")
     async def view(self, ctx: discord.ApplicationContext,
@@ -97,7 +101,7 @@ class Crypto(commands.Cog):
             user = user or ctx.author
             usr_address = get_address(user.id)
             if usr_address is None:
-                await ctx.respond('User does not have a wallet!')
+                await ctx.respond('User does not have a wallet!', ephemeral=True)
                 return
             address, id = get_last_nft(usr_address)
         url = f'https://deep-index.moralis.io/api/v2/nft/{address}/{id}?chain=ropsten&format=decimal'
@@ -108,15 +112,17 @@ class Crypto(commands.Cog):
             img_url = metadata['image']
             etherscan_url = f'https://ropsten.etherscan.io/address/{address}'
             owner = response.json()['owner_of']
-            owner = user.nick or user.name if usr_address == owner else owner
+            
+            # Hack around moralis formatting weirdness
+            owner = user.nick or user.name if usr_address.lower() == owner.lower() else owner
             
             embed = discord.Embed(title=f'{owner}\'s NFT!')
             embed.set_image(url=img_url)
-            embed.set_footer(text=f'[{address}]({etherscan_url})')
+            embed.description = f'[{address}]({etherscan_url})'
             await ctx.respond(embed=embed)
             return
         print(f'Invalid combo:{user}, {address}, {id}')
-        await ctx.respond('NFT not found!')
+        await ctx.respond('NFT not found!', ephemeral=True)
 
 def setup(bot):
     bot.add_cog(Crypto(bot))
