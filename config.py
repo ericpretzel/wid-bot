@@ -1,4 +1,5 @@
 import os
+
 # Discord bot access token. Located in .env file in base directory.
 TOKEN = os.environ['TOKEN']
 # You get these from developer settings in reddit, ask kai to get added as developer
@@ -11,11 +12,18 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 # folder that all data files are stored in
 DATA_FOLDER = 'data'
 
+# Persistent data storage
+DB_FILE = os.path.join(DATA_FOLDER, 'config.db')
+
 # NFT related
-WALLET = os.path.join(DATA_FOLDER, 'wallet.json')
 NFT_SIZE = 600
-PREFIX = 'https://ipfs.io/ipfs/'
-BASE = 'QmWrHFYZarTP2b1qCzG7xB45C7P2f8NvEczUfKDgiv3uEs'
+INFURA_GATEWAY = os.environ['INFURA_GATEWAY']
+BASE_URL = 'https://cdn.discordapp.com/attachments/915513848059027457/945195853725978644/unknown.png'
+CONTRACT_ADDRESS = '0xE551386387B1293a738FB5b0aaB10592d13473A2'
+WID_ADDR = os.environ['WID_ADDR']
+PRIVATE_KEY = os.environ['PRIVATE_KEY']
+MORALIS_KEY = os.environ['MORALIS_KEY']
+ABI_PATH = os.path.join(DATA_FOLDER, 'abi.json')
 
 # Wordle related
 WORDLE_WORD_LIST = os.path.join(DATA_FOLDER, 'wordle-word-list.txt')

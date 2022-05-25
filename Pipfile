@@ -15,3 +15,5 @@ py-cord = {git = "https://github.com/Pycord-Development/pycord.git", editable = 
 pillow = "*"
 asyncpraw = "*"
 markovify = "*"
+web3 = "*"
+aiohttp = "*"

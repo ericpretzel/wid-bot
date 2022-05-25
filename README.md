@@ -10,6 +10,7 @@ Main dependencies:
 - [Pipenv](https://pipenv.pypa.io/en/latest/) - used to manage misc. dependencies and run the bot
 - [Pycord](https://github.com/Pycord-Development/pycord) - a [discord.py](https://github.com/Rapptz/discord.py) fork for interacting with the Discord API
 - [Async PRAW](https://github.com/praw-dev/asyncpraw) - interacting with the Reddit API
+- [Web3py](https://web3py.readthedocs.io/en/stable/#) - interacting with the blockchain
 - Discord bot hosting service
 
 ## Features
@@ -27,7 +28,8 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contrib
 ## Replication
 
 *Note: wid-bot is intended for small private server use only because it uses the ["message content" privileged intent](https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Privileged-Intent-for-Verified-Bots). It will not work as a larger bot (100+ servers) without modification.*
-1. **Create your own [Discord Application](https://discord.com/developers/applications). Make a [Reddit API](https://www.reddit.com/dev/api/) account as well.**
+1. **Create your own [Discord Application](https://discord.com/developers/applications). Make a [Reddit API](https://www.reddit.com/dev/api/) account as well.**  
+For the NFT functionality, a [Moralis](https://moralis.io) API key and [Infura](https://infura.io) gateway token for the Ropsten testnet are required to access the blockchain. Furthermore, the NFT functionality uses real (test) Ethereum, so a Metamask (or similar) wallet with Ropsten Ethereum is required.  
 *Access to the original ("OG") wid-bot application is restricted to members of Widmark Clan only.*
 
 Make a Discord bot account for the application then add it to your server.
@@ -47,6 +49,10 @@ $ echo TOKEN=qwertyuiop >> .env
 $ echo GUILD_ID=12345678 >> .env
 $ echo REDDIT_SECRET=asdfghjkl >> .env
 $ echo REDDIT_ID=zxcvbnm >> .env
+$ echo INFURA_GATEWAY=ROPSTEN_GATEWAY_TOKEN >> .env
+$ echo MORALIS_KEY=MORALIS_API_KEY >> .env
+$ echo WID_ADDR=WALLET_PUBLIC_KEY >> .env
+$ echo PRIVATE_KEY=WALLET_PRIVATE_KEY >> .env
 ```
 These values are read and set up in [`config.py`](config.py). You can put them directly in the file instead, but make sure that those keys are never shared to the public because they can and will be stolen.
 

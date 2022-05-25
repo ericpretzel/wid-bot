@@ -128,8 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# NFT wallet
-wallet.json
+# NFT wallets
+data/config.db
 
 # Demons data (except for placeholder file)
 data/demons/*
