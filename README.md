@@ -29,7 +29,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contrib
 
 *Note: wid-bot is intended for small private server use only because it uses the ["message content" privileged intent](https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Privileged-Intent-for-Verified-Bots). It will not work as a larger bot (100+ servers) without modification.*
 1. **Create your own [Discord Application](https://discord.com/developers/applications). Make a [Reddit API](https://www.reddit.com/dev/api/) account as well.**  
-For the NFT functionality, a [Moralis](https://moralis.io) API key and [Infura](https://infura.io) gateway token for the Ropsten testnet are required to access the blockchain. Furthemore, the NFT functionality uses real (test) Ethereum, so a Metamask (or similar) wallet with Ropsten Ethereum is required.  
+For the NFT functionality, a [Moralis](https://moralis.io) API key and [Infura](https://infura.io) gateway token for the Ropsten testnet are required to access the blockchain. Furthermore, the NFT functionality uses real (test) Ethereum, so a Metamask (or similar) wallet with Ropsten Ethereum is required.  
 *Access to the original ("OG") wid-bot application is restricted to members of Widmark Clan only.*
 
 Make a Discord bot account for the application then add it to your server.
