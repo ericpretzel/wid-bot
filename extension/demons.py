@@ -25,7 +25,7 @@ class Demons(commands.Cog):
         description="Begin the ritual.",
         guild_ids=[config.GUILD_ID]
     )
-    @permissions.is_owner()
+    @commands.is_owner()
     async def summon_demons(self, ctx: discord.ApplicationContext):
         """
         Fetches every single message from the server.
