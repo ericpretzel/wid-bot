@@ -9,11 +9,10 @@ name = "pypi"
 python_version = "3.9"
 
 [packages]
-requests = "*"
-selenium = "*"
 py-cord = {git = "https://github.com/Pycord-Development/pycord.git", editable = true, ref = "master"}
 pillow = "*"
 asyncpraw = "*"
 markovify = "*"
 web3 = "*"
 aiohttp = "*"
+arsenic = "*"
