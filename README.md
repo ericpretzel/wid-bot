@@ -41,9 +41,9 @@ Keep the Discord bot token and Reddit secret/ID handy.
 
 2. **Set up the code environment.**
 
-`git clone` this repository, and make sure you have all the above dependencies installed. Pipenv will take care of the rest of them. 
+`git clone` this repository, and make sure you have followed the instructions above. Pipenv will take care of the dependencies. 
 
-Run the following commands inside the base directory of the project, which will store your  keys in a hidden file named `.env`. This is where sensitive information like the bot token and API keys will go. Replace the values below with your own personal values.
+Run the following commands inside the base directory of the project, which will store your keys in a hidden file named `.env`. This is where sensitive information like the bot token and API keys will go. Replace the values below with your own personal values.
 ```
 $ echo TOKEN=qwertyuiop >> .env
 $ echo GUILD_ID=12345678 >> .env
@@ -54,13 +54,13 @@ $ echo MORALIS_KEY=MORALIS_API_KEY >> .env
 $ echo WID_ADDR=WALLET_PUBLIC_KEY >> .env
 $ echo PRIVATE_KEY=WALLET_PRIVATE_KEY >> .env
 ```
-These values are read and set up in [`config.py`](config.py). You can put them directly in the file instead, but make sure that those keys are never shared to the public because they can and will be stolen.
+These values are read and set up in [`config.py`](config.py). You can put them directly in the file instead, but make sure that those keys are never shared publicly because they can and will be stolen.
 
-Install [`chromedriver 97.0.4692.71`](https://chromedriver.storage.googleapis.com/index.html?path=97.0.4692.71/) for headless browsing with [`selenium`](https://www.selenium.dev/). Either put the binary on PATH or in the base project directory. You may also need to install Google Chrome itself.
+Install [`chromedriver 97.0.4692.71`](https://chromedriver.storage.googleapis.com/index.html?path=97.0.4692.71/) for asynchronous headless browsing with [`arsenic`](https://github.com/HENNGE/arsenic). Either put the binary on PATH or in the base project directory. You may also need to install Google Chrome itself.
 
 Finally, install the dependencies outlined in [`Pipfile`](Pipfile) and [`Pipfile.lock`](Pipfile.lock). 
 ```
-$ pipenv install
+$ pipenv sync
 ```
 
 3. **Host and run the bot.**
