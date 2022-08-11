@@ -1,8 +1,9 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import arsenic
+from arsenic import services, browsers
+import structlog
+import logging
+import os
+import config
 import re
 import json
 
@@ -29,56 +30,60 @@ ranks = {
     17: 'Supreme Master First Class',
     18: 'The Global Elite'
 }
-find_nickname = re.compile('Nick Name\\n<input type="text" onclick="this\\.select\\(\\);" value="(.+)">')
-find_thumbnail = re.compile('src="(https:\\/\\/.+_full.jpg)"')
-find_id = re.compile('"(\\d{17})"')
-find_stats = re.compile('var stats = ({.+});')
+# for searching web page source
+find_nickname = re.compile(r'Nick Name\n<input type="text" onclick="this\.select\(\);" value="(.+)">')
+find_thumbnail = re.compile(r'src="(https:\/\/.+_full.jpg)"')
+find_id = re.compile(r'"(\d{17})"')
+find_stats = re.compile(r'var stats = ({.+});')
 
-# configure settings
-options = Options()
-options.add_argument('--enable-javascript')
-options.add_argument('--headless')
+# configure structlog so arsenic doesn't clog the hell out of stdout
+# from https://github.com/HENNGE/arsenic/issues/35#issuecomment-451540986
+logger = logging.getLogger('arsenic')
+structlog.configure(logger_factory=lambda: logger)
+logger.setLevel(logging.WARNING)
 
-"""
-Retrieves stats for a user from https://csgostats.gg.
-"""
-def get_stats(query):
-    driver = webdriver.Chrome(options=options)
+async def get_stats(query):
+    """
+    Retrieves stats for a user from https://csgostats.gg.
+    """
+    service = services.Chromedriver(log_file=os.devnull)
+    args=['--headless', '--disable-gpu', '--no-sandbox', 
+    'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36']
+    kwargs = {'goog:chromeOptions': dict(args=args)}
+    browser = browsers.Chrome(**kwargs)
 
-    # workaround for being detected as a bot
-    # got this from https://stackoverflow.com/a/69766804
-    driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'})
-    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    async with arsenic.get_session(service, browser) as session:
+        await session.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        await session.get(f'https://steamid.xyz/{query}')
 
-    # find the steamID of the user
-    driver.get(f'https://steamid.xyz/{query}')
+        src = await session.get_page_source()
+        result = find_nickname.search(src)
+        nickname = result.group(1) if result else "?"
 
-    result = find_nickname.search(driver.page_source)
-    nickname = result.group(1)
+        result = find_id.search(src)
+        user_id = result.group(1) if result else None
 
-    result = find_id.search(driver.page_source)
-    id = result.group(1)
+        result = find_thumbnail.search(src)
+        thumbnail = result.group(1) if result else config.BASE_URL
 
-    result = find_thumbnail.search(driver.page_source)
-    thumbnail = result.group(1)
+        if user_id:
+            await session.get(f"https://csgostats.gg/player/{user_id}")
+            src = await session.get_page_source()
+        else:
+            src = ""
 
-    driver.get(f'https://csgostats.gg/player/{id}')
-    result = find_stats.search(driver.page_source)
-
-    current_rank = driver.find_element(By.XPATH, '//*[@id="content-wrapper"]/div[3]/div[1]/div/div[2]/div[1]/img').get_attribute('src')
-    current_rank = ranks[int(current_rank[current_rank.rindex('/')+1:-4])]
-
-    best_rank = driver.find_element(By.XPATH, '//*[@id="content-wrapper"]/div[3]/div[1]/div/div[2]/div[1]/div/img').get_attribute('src')
-    best_rank = ranks[int(best_rank[best_rank.rindex('/')+1:-4])]
-
-    stats = json.loads(result.group(1))
-    games_played = stats['totals']['overall']['games']
-    stats = stats['overall']
-    stats['games'] = games_played
-    stats['nickname'] = nickname
-    stats['thumbnail'] = thumbnail
-    stats['current_rank'] = current_rank
-    stats['best_rank'] = best_rank
-
-    driver.close()
-    return stats
+        result = find_stats.search(src)
+        stats = json.loads(result.group(1) if result else "{}")
+        try:
+            games_played = stats['totals']['overall']['games']
+            current_rank = ranks[stats['rank']]
+        except KeyError:
+            games_played = "?"
+            current_rank = "?"
+        
+        stats = stats.get('overall', dict())
+        stats['games'] = games_played
+        stats['nickname'] = nickname
+        stats['thumbnail'] = thumbnail
+        stats['current_rank'] = current_rank
+        return stats

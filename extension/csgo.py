@@ -1,3 +1,4 @@
+import asyncio
 import config
 import discord
 from discord.ext import commands
@@ -13,7 +14,6 @@ stat_values = {
     'Win %': 'wr',
     'Games Played': 'games',
     'Current Rank': 'current_rank',
-    'Best Rank': 'best_rank'
     # thumbnail
 }
 
@@ -36,13 +36,13 @@ class CSGO(commands.Cog):
         await ctx.defer()
 
         try:
-            stats = get_stats(user)
+            stats = await get_stats(user)
         except Exception as e:
-            return await ctx.respond('An error occurred.')
+            return await ctx.respond(str(e))
 
         embed=discord.Embed(title=f"CS:GO stats for {stats['nickname']}", description="from csgostats.gg")
         for k, v in stat_values.items():
-            embed.add_field(name=k, value=stats[v], inline=True)
+            embed.add_field(name=k, value=stats.get(v, "?"), inline=True)
         embed.set_thumbnail(url=stats['thumbnail'])
 
         await ctx.respond(embed=embed)
