@@ -14,9 +14,10 @@ class Widbase(commands.Cog):
         self.bot = bot
         self.update_widbase.start()
 
-    @tasks.loop(hours=6)
+    @tasks.loop(hours=8)
     async def update_widbase(self):
         await self.bot.wait_until_ready()
+        print('Updating messages in database...')
         conn = sqlite3.connect(config.DB_FILE)
         # create messages table if it doesn't exist
         conn.execute(
@@ -42,6 +43,7 @@ class Widbase(commands.Cog):
                 values = (message.id, message.author.id, channel.id, int(message.created_at.timestamp()), message.content)
                 conn.execute(f'INSERT OR IGNORE INTO messages VALUES (?, ?, ?, ?, ?);', values)
                 conn.commit()
+        print('Successfully updated messages in database.')
         conn.close()
 
 def setup(bot):

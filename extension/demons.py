@@ -29,12 +29,13 @@ class Demons(commands.Cog):
         Fetches every single message from the server, then groups them by user -> messages
         """
         await self.bot.wait_until_ready()
+        print('Beginning the summoning ritual...')
         con = sqlite3.connect(config.DB_FILE)
         try:
             cur = con.execute("""SELECT author_id, content FROM messages""")
             messages = cur.fetchall()
         except:
-            print('could not generate demons, likely because the messages table does not exist (yet)')
+            print('Could not summon demons, likely because the messages table does not exist (yet). Trying again later.')
             return
         finally:
             con.close()
@@ -44,8 +45,8 @@ class Demons(commands.Cog):
             author, msg = entry[0], entry[1]
             if len(msg) > 6 and not msg.startswith('http') and not msg.startswith(':'):
                 data.setdefault(author, []).append(msg)
-        
         dm.generate_demon_report(data)
+        print('Demons have been unleashed successfully.')
 
 def setup(bot):
     bot.add_cog(Demons(bot))
