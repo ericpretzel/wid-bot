@@ -1,19 +1,21 @@
 import config
 import discord
-from discord.ext import commands
-from discord.commands import user_command, slash_command, permissions
+from discord.ext import commands, tasks
+from discord.commands import user_command
 from discord.utils import escape_mentions
+import sqlite3
 import util.demon_manager as dm
 
 class Demons(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
+        self.summon_demons.start()
 
     @user_command(name="Unleash Demons", guild_ids=[config.GUILD_ID])
     async def demons(self, ctx: discord.ApplicationContext, mem: discord.Member):
         message = f"**{mem.display_name}'s demons:**\n"
         try:
-            message += dm.generate_sentences(ctx.guild_id, mem.id, 15)
+            message += dm.generate_sentences(mem.id, 15)
         except dm.ModelNotFoundException:
             return await ctx.respond('These demons have not been summoned yet...', ephemeral=True)
         message = escape_mentions(message)
@@ -21,39 +23,29 @@ class Demons(commands.Cog):
             message = message[:2000-3] + '...'
         await ctx.respond(message)
 
-    @slash_command(
-        description="Begin the ritual.",
-        guild_ids=[config.GUILD_ID]
-    )
-    @commands.is_owner()
-    async def summon_demons(self, ctx: discord.ApplicationContext):
+    @tasks.loop(hours=12)
+    async def summon_demons(self):
         """
-        Fetches every single message from the server.
-        EXTREMELY TIME CONSUMING.
+        Fetches every single message from the server, then groups them by user -> messages
         """
-
-        await ctx.respond("The ritual has begun.", ephemeral=True)
-        messages_parsed = 0
-        guild = ctx.guild
-        print(f'Gathering data from guild {guild.id}...')
-        data = dict()
-        for channel in guild.text_channels:
-            async for message in channel.history(limit = None) \
-                .filter(lambda msg: len(msg.content) > 6) \
-                .filter(lambda msg: not msg.content.startswith('http')) \
-                .filter(lambda msg: not msg.content.startswith(':')):
-                user_id = message.author.id
-                if user_id not in data:
-                    data[user_id] = list()
-                data[user_id].append(message.content)
-                messages_parsed += 1
-                if messages_parsed % 100 == 0:
-                    print(f'messages_parsed: {messages_parsed}')
-                    print(f'current message: {message.content}')
-        print('Done gathering. Generating report.')
-        dm.generate_demon_report(guild.id, data)
-        print('Report generated!')
-
+        await self.bot.wait_until_ready()
+        con = sqlite3.connect(config.DB_FILE)
+        try:
+            cur = con.execute("""SELECT author_id, content FROM messages""")
+            messages = cur.fetchall()
+        except:
+            print('could not generate demons, likely because the messages table does not exist (yet)')
+            return
+        finally:
+            con.close()
+        
+        data = {}
+        for entry in messages:
+            author, msg = entry[0], entry[1]
+            if len(msg) > 6 and not msg.startswith('http') and not msg.startswith(':'):
+                data.setdefault(author, []).append(msg)
+        
+        dm.generate_demon_report(data)
 
 def setup(bot):
     bot.add_cog(Demons(bot))
