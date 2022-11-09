@@ -43,7 +43,7 @@ class PollModal(discord.ui.Modal):
     The poll is then displayed to the channel in a PollView.
     """
     def __init__(self, num_options, view_timeout, anonymous):
-        super().__init__('Create Poll')
+        super().__init__(title='Create Poll')
         self.view_timeout = view_timeout
         self.anonymous = anonymous
 
