@@ -11,7 +11,6 @@ import altair_saver as alt_saver
 import pandas as pd
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
-import collections
 
 class Widbase(commands.Cog):
     """
@@ -68,9 +67,8 @@ class Widbase(commands.Cog):
         for row in messages:
             msg = row[0].strip().split(' ')
             for word in msg:
-                if word not in STOPWORDS:
+                if word not in STOPWORDS and word.isalnum() and not word.isnumeric():
                     frequencies[word] = frequencies.get(word, 0) + 1
-
         wordcloud = WordCloud(width=400, height=400, scale=2,
                                 max_words=100,
                                 background_color='white',
