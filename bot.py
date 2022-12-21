@@ -12,6 +12,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game('CS:GO with widmark clan'))
     print('wid is ready!')
 
+@bot.event
+async def on_application_command_error(ctx: discord.ApplicationContext, exc: discord.ApplicationCommandError):
+    return await ctx.respond(exc)
+
 # currently won't work: slash commands cannot be reloaded.
 # hopefully will be changed in the future
 @bot.slash_command(guild_ids=[config.GUILD_ID])
