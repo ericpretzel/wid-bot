@@ -8,7 +8,7 @@ import re
 import json
 
 # rank img takes the form:
-# https://static.csgostats.gg/images/ranks/{i}.png
+# https://static.csstats.gg/images/ranks/{i}.png
 # this converts the number to the rank's actual name
 ranks = {
     1: 'Silver I',
@@ -35,6 +35,7 @@ find_nickname = re.compile(r'Nick Name\n<input type="text" onclick="this\.select
 find_thumbnail = re.compile(r'src="(https:\/\/.+_full.jpg)"')
 find_id = re.compile(r'"(\d{17})"')
 find_stats = re.compile(r'var stats = ({.+});')
+find_premier_rank = re.compile(r'(\d+)\D+,(\d+)<')
 
 # configure structlog so arsenic doesn't clog the hell out of stdout
 # from https://github.com/HENNGE/arsenic/issues/35#issuecomment-451540986
@@ -44,7 +45,7 @@ logger.setLevel(logging.WARNING)
 
 async def get_stats(query):
     """
-    Retrieves stats for a user from https://csgostats.gg.
+    Retrieves stats for a user from https://csstats.gg.
     """
     service = services.Chromedriver(log_file=os.devnull)
     args=['--headless', '--disable-gpu', '--no-sandbox', 
@@ -67,7 +68,7 @@ async def get_stats(query):
         thumbnail = result.group(1) if result else config.BASE_URL
 
         if user_id:
-            await session.get(f"https://csgostats.gg/player/{user_id}")
+            await session.get(f"https://csstats.gg/player/{user_id}")
             src = await session.get_page_source()
         else:
             src = ""
@@ -76,14 +77,21 @@ async def get_stats(query):
         stats = json.loads(result.group(1) if result else "{}")
         try:
             games_played = stats['totals']['overall']['games']
-            current_rank = ranks[stats['rank']]
+            csgo_rank = ranks[stats['rank']]
         except KeyError:
             games_played = "?"
-            current_rank = "?"
-        
+            csgo_rank = "?"
+
+        result = find_premier_rank.search(src)
+        if result:
+            premier_rank = f'{result.group(1)},{result.group(2)}'
+        else:
+            premier_rank = "?"
+
         stats = stats.get('overall', dict())
         stats['games'] = games_played
         stats['nickname'] = nickname
         stats['thumbnail'] = thumbnail
-        stats['current_rank'] = current_rank
+        stats['csgo_rank'] = csgo_rank
+        stats['premier_rank'] = premier_rank
         return stats
