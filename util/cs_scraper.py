@@ -81,11 +81,15 @@ async def get_stats(query):
         except KeyError:
             games_played = "?"
 
-        # the peak rank is the second instance
-        result = find_csgo_rank.search(src)
-        result = find_csgo_rank.search(src, result.start()+1 if result else 0)
-        if result:
-            csgo_rank = ranks[int(result.group(1))]
+        # the peak rank is the second instance. but sometimes it just isn't there so we fall back to the first one
+        end_csgo_rank = find_csgo_rank.search(src)
+        peak_csgo_rank_maybe = find_csgo_rank.search(src, end_csgo_rank.start()+1 if end_csgo_rank else 0)
+        if end_csgo_rank:
+            # we check if the starts are close enough together because there are other unwanted matches later in the html code
+            if peak_csgo_rank_maybe and abs(peak_csgo_rank_maybe.start() - end_csgo_rank.start()) <= 150:
+                csgo_rank = ranks[int(peak_csgo_rank_maybe.group(1))]
+            else:
+                csgo_rank = ranks[int(end_csgo_rank.group(1))]
         else:
             csgo_rank = "?"
 
