@@ -6,8 +6,6 @@ from discord.ext import commands, tasks
 import discord.utils
 from discord.commands import slash_command, Option
 import io
-import altair as alt
-import altair_saver as alt_saver
 import pandas as pd
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
@@ -38,14 +36,15 @@ class Widbase(commands.Cog):
             if user and not user.bot:
                 id_to_username[author_id] = user.display_name
         source['author_id'] = source['author_id'].apply(id_to_username.get)
-        source.dropna(inplace=True)
-        chart = alt.Chart(source).mark_bar().encode(
-            x=alt.X('author_id', title='User', type='nominal', sort='y'),
-            y=alt.Y('COUNT(*)', title='Messages sent')
-        )
-        file = io.BytesIO(alt_saver.save(chart=chart, fmt='png'))
-        file.seek(0)
-        return await ctx.respond(file=discord.File(fp=file, filename='count.png'))
+        source = source[source['author_id'].notna()] # drop rows where user doesn't exist anymore
+        
+        plt.barh(source['author_id'], source['COUNT(*)'])
+        plt.title('Message Counts')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close()
+        return await ctx.respond(file=discord.File(fp=buf, filename='count.png'))
     
     @stats.command(name='wordcloud', description='Generate a word cloud for a specified user, or for the entire server if unspecified.')
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.default)
@@ -80,6 +79,7 @@ class Widbase(commands.Cog):
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
+        plt.close()
         return await ctx.respond(f"{user.display_name if user else 'The server'}'s word cloud:", file=discord.File(fp=buf, filename='cloud.png'))
 
     @tasks.loop(hours=8)
