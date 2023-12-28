@@ -13,7 +13,7 @@ stat_values = {
     'Rating': 'rating',
     'Win %': 'wr',
     'Games Played': 'games',
-    'CS:GO Rank': 'csgo_rank',
+    'CS:GO Peak': 'csgo_rank',
     'Premier Rank': 'premier_rank'
     # thumbnail
 }

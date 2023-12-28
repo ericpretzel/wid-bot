@@ -36,6 +36,7 @@ find_thumbnail = re.compile(r'src="(https:\/\/.+_full.jpg)"')
 find_id = re.compile(r'"(\d{17})"')
 find_stats = re.compile(r'var stats = ({.+});')
 find_premier_rank = re.compile(r'(\d+)\D+,(\d+)<')
+find_csgo_rank = re.compile(r'images\/ranks\/(\d+).png')
 
 # configure structlog so arsenic doesn't clog the hell out of stdout
 # from https://github.com/HENNGE/arsenic/issues/35#issuecomment-451540986
@@ -77,9 +78,15 @@ async def get_stats(query):
         stats = json.loads(result.group(1) if result else "{}")
         try:
             games_played = stats['totals']['overall']['games']
-            csgo_rank = ranks[stats['rank']]
         except KeyError:
             games_played = "?"
+
+        # the peak rank is the second instance
+        result = find_csgo_rank.search(src)
+        result = find_csgo_rank.search(src, result.start()+1 if result else 0)
+        if result:
+            csgo_rank = ranks[int(result.group(1))]
+        else:
             csgo_rank = "?"
 
         result = find_premier_rank.search(src)
