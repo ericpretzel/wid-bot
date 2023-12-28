@@ -105,7 +105,8 @@ class Widbase(commands.Cog):
                 latest_message = datetime.datetime.fromtimestamp((await cur.fetchone())[0] or guild.created_at.timestamp(), tz=datetime.timezone.utc)
 
             # gather and insert new messages since last time
-            for channel in guild.text_channels:
+            for channel in await guild.fetch_channels():
+                if channel.type != discord.ChannelType.text: continue
                 async for message in channel.history(limit=None, after=latest_message):
                     values = (message.id, message.author.id, channel.id, int(message.created_at.timestamp()), message.content)
                     await con.execute(f'INSERT OR IGNORE INTO messages VALUES (?, ?, ?, ?, ?);', values)
