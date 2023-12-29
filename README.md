@@ -17,7 +17,7 @@ Main dependencies:
 wid-bot comes with a variety of amazing and fun commands to use, including, but not limited to...
 Command      | Description
 ------------ | ------------
-`/csgostats` | Retrieve a user's CS:GO stats
+`/csstats`   | Retrieve a user's Counter Strike stats
 `/wordle`    | Play a game of Wordle
 `/aita`      | Guess whether a Redditor is TA or not (very hard)
 `/mint`      | Mint an NFT on the Widcoin blockchain
