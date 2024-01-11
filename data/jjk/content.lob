@@ -1,0 +1,85 @@
+// Curated phrases from hit manga Jujutsu Kaisen.
+// Formatted like so:
+// [TYPE1|TYPE2]:[phrase]
+// each type symbol on the left side represents how the phrase can be used in a sentence.
+// each type symbol used on the right side represents a possible insertion point for a phrase that has that symbol.
+// e.g. 'hello [NOUN]' could generate the sentence 'hello world' or 'hello friend'
+// possible symbols: [NOUN][NAME][ADJECTIVE][VERB][ADVERB][PREFIX][SENTENCE]
+// TODO: if they contain a ? they are optional or something
+// TODO: system to guarantee distinct symbols? maybe like ADJECTIVE1 ADJECTIVE2 ... etc. this also lets you re-use specific ones
+// lines with [SENTENCE] on the left are used as "base" phrases for the final result
+[ADJECTIVE]:cursed
+[ADJECTIVE]:reverse cursed
+[ADJECTIVE]:divine
+[ADJECTIVE]:strong
+[ADJECTIVE]:honored
+[ADJECTIVE]:overwhelming
+[NOUN]:[NOUN]bearer
+[NOUN]:treasure
+[NOUN]:hollow purple
+[NOUN]:instant body of distorted killing
+[NOUN]:chimera shadow garden
+[NOUN]:wind scythe
+[NOUN]:curse
+[NOUN]:six eyes
+[NOUN]:[ADJECTIVE] eyes
+[NOUN]:technique
+[NOUN]:[ADJECTIVE] technique
+[NOUN]:[ADJECTIVE] energy
+[NOUN]:unlimited void
+[NOUN]:black flash
+[NOUN]:domain
+[NOUN]:simple domain
+[NOUN]:sorcerer
+[NOUN]:[ADJECTIVE] intensity
+[NOUN]:[ADJECTIVE] dog
+[NOUN]:the [ADJECTIVE] one
+[NOUN]:[ADJECTIVE] kaisen
+[NOUN]:jujutsu kaisen
+[NOUN|ADJECTIVE]:uzumaki
+[NOUN|ADJECTIVE]:special grade
+[NOUN|ADJECTIVE]:ultimate
+[NOUN|ADJECTIVE]:jujutsu
+[NOUN|ADJECTIVE]:ten shadows
+[NOUN|ADJECTIVE]:disaster
+[NOUN|PREFIX|ADJECTIVE]:boogie woogie
+[NOUN|VERB]:stand proud
+[NOUN|PREFIX]:fraud
+[NOUN|PREFIX]:finger
+[NAME]:sukuna
+[NAME]:[PREFIX]kuna
+[NAME]:toji
+[NAME]:yuji
+[NAME]:gojo
+[NAME]:satoru
+[NAME]:geto
+[NAME]:suguru
+[NAME]:jogo
+[NAME]:megumi
+[NAME]:nobara
+[NAME]:mahoraga
+[NAME]:eight-handled sword divergent sila divine general mahoraga
+[NAME]:[ADJECTIVE] [ADJECTIVE] [ADJECTIVE] [ADJECTIVE] mahoraga
+[NAME]:yuki
+[NAME]:choso
+[NAME]:mahito
+[NAME]:the one who left it all behind
+[SENTENCE]:the one who left it all behind, and his overwhelming [NOUN]
+[SENTENCE]:stand proud, you're [ADJECTIVE]
+[SENTENCE]:stand proud [NAME], you're [ADJECTIVE]
+[SENTENCE]:with this [NOUN] i summon [NAME]
+[SENTENCE]:nah, i'd win
+[SENTENCE]:nah, [NAME|NOUN]'d win
+[SENTENCE]:nah, i'd lose
+[SENTENCE]:nah, i'd [VERB|SENTENCE]
+[SENTENCE]:throughout heaven and earth, i alone am the [ADJECTIVE] [NOUN]
+[SENTENCE]:throughout heaven and earth, i alone am the honored [NOUN]
+[SENTENCE]:throughout heaven and earth, [SENTENCE]
+[SENTENCE]:are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE] or are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE]
+[SENTENCE]:always bet on [NAME|SENTENCE|NOUN]
+[SENTENCE]:domain expansion: [NOUN]
+[SENTENCE]:uh, sorry but i ate that [NOUN]
+[SENTENCE]:technique reversal: [NOUN]
+[SENTENCE]:i like a man who's [ADJECTIVE] and [ADJECTIVE]
+[SENTENCE]:[SENTENCE] [SENTENCE]
+[SENTENCE]:this was truly a [ADJECTIVE] [NOUN|NAME]
