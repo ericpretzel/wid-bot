@@ -1,0 +1,2 @@
+data/silly/*/*.png filter=lfs diff=lfs merge=lfs -text
+data/font/*.ttf filter=lfs diff=lfs merge=lfs -text

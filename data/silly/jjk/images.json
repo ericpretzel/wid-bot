@@ -1,0 +1,24 @@
+{
+    "data/silly/jjk/nah_id_win.png": [
+        {
+            "x": 2200,
+            "y": 330,
+            "w": 670,
+            "h": 770 
+        }
+    ],
+    "data/silly/jjk/left_it_all_behind.jpg": [
+        {
+            "x":520,
+            "y":50,
+            "w":135,
+            "h":220
+        },
+        {
+            "x": 90,
+            "y": 810,
+            "w": 160,
+            "h": 240
+        }
+    ]
+}

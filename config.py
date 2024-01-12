@@ -2,6 +2,7 @@ import os
 
 # Discord bot access token. Located in .env file in base directory.
 TOKEN = os.environ['TOKEN']
+
 # You get these from developer settings in reddit, ask kai to get added as developer
 REDDIT_SECRET = os.environ['REDDIT_SECRET']
 REDDIT_ID = os.environ['REDDIT_ID']
@@ -11,6 +12,9 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 
 # folder that all data files are stored in
 DATA_FOLDER = 'data'
+
+# fonts folder
+FONT_FOLDER = os.path.join(DATA_FOLDER, 'font')
 
 # Persistent data storage
 DB_FILE = os.path.join(DATA_FOLDER, 'config.db')
@@ -33,5 +37,9 @@ FIVE_LETTER_WORDS = os.path.join(DATA_FOLDER, 'five-letter-words.txt')
 # https://raw.githubusercontent.com/Kevinpgalligan/EmojipastaBot/master/src/emojipasta/data/emoji-mappings.json
 EMOJI_MAPPINGS = os.path.join(DATA_FOLDER, 'emoji-mappings.json')
 
-# Demons storage
-DEMONS_FOLDER = os.path.join(DATA_FOLDER, 'demons', )
+# Sillyfier data storage
+SILLY_FOLDER = os.path.join(DATA_FOLDER, 'silly')
+SILLY_JJK = os.path.join(SILLY_FOLDER, 'jjk')
+
+# fonts
+FONT_COMIC_SANS = os.path.join(FONT_FOLDER, 'comic-sans.ttf')

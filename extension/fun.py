@@ -1,6 +1,7 @@
 import json
 import config
 import discord
+import io
 from util.emojifier import Emojifier
 from discord.ext import commands
 from discord.commands import slash_command, message_command, user_command
@@ -8,11 +9,15 @@ from discord.utils import escape_mentions
 import aiosqlite
 import markovify
 import random
+import util.sillyfier as silly
 
 class Fun(commands.Cog):
-    def __init__(self, bot, emojifier):
+    # todo rename jjk_phrases
+    def __init__(self, bot, emojifier, jjk_phrases, jjk_image_data):
         self.bot = bot
         self.emojifier = emojifier
+        self.jjk_phrases = jjk_phrases
+        self.jjk_image_data = jjk_image_data
     
     @message_command(name='Emojify', guild_ids=[config.GUILD_ID])
     async def emojify(self, ctx: discord.ApplicationContext, msg: discord.Message):
@@ -42,7 +47,7 @@ class Fun(commands.Cog):
                 messages = await con.execute_fetchall("""SELECT content FROM messages WHERE author_id=(?)""", (mem.id,))
                 messages = [msg[0] for msg in messages] # unwrap it bc they are returned as tuples
             except:
-                await ctx.respond('Could not summon demons, likely because the messages table does not exist (yet). Trying again later.')
+                await ctx.respond('Could not summon demons, likely because the messages table does not exist (yet). Try again later.')
                 return
 
         # messages must meet these criteria to be considered for the markov chain corpus:
@@ -63,6 +68,13 @@ class Fun(commands.Cog):
             message = message[:2000-3] + '...'
         return await ctx.respond(message)
 
+    @slash_command(guild_ids=[config.GUILD_ID])
+    async def sillyfy(self, ctx: discord.ApplicationContext):
+        # todo make it possible to sillyfy other things than just jjk
+        await ctx.defer()
+        buf = silly.generate_image(self.jjk_phrases, self.jjk_image_data)
+        return await ctx.respond(file=discord.File(fp=buf, filename='silly.png'))
+
     @slash_command(guild_ids=[config.GUILD_ID], 
         description='Holy fax')
     async def hf(self, ctx: discord.ApplicationContext):
@@ -73,5 +85,7 @@ def setup(bot):
     with open(config.EMOJI_MAPPINGS) as f:
         mappings = json.load(f)
         emojifier = Emojifier(mappings)
+    # todo put the filename in config.py
+    jjk_phrases, jjk_image_data = silly.load_silly(config.SILLY_JJK)
 
-    bot.add_cog(Fun(bot, emojifier))
+    bot.add_cog(Fun(bot, emojifier, jjk_phrases, jjk_image_data))
