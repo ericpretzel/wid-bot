@@ -44,7 +44,7 @@ def insert_content(phrases: defaultdict[str, set], sentence: str, depth=0):
 
         sentence = sentence[:start] + phrase + sentence[end+1:]
 
-def sillyfy(phrases: defaultdict[str, set]):
+def sillyfy(phrases: defaultdict[str, set]) -> str:
     sentence: str = random.choice(tuple(phrases['SENTENCE']))
     return insert_content(phrases, sentence)
 
@@ -54,19 +54,20 @@ def generate_image(phrases: defaultdict[str, set], image_data: dict, num_images=
     image_name = random.choice(tuple(image_data.keys()))
     img = Image.open(image_name)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(config.FONT_COMIC_SANS, 64)
-
     rectangles = image_data[image_name]
-    sentences = [sillyfy(phrases) for _ in range(len(rectangles))]
-    for rect, sentence in zip(rectangles, sentences):
+
+    for rect in rectangles:
         x = rect['x']
         y = rect['y']
         w = rect['w']
         h = rect['h']
+        sentence = sillyfy(phrases)[:24]
+        
+        font_size = w // 4
+        font = ImageFont.truetype(config.FONT_COMIC_SANS, font_size)
+        text_wrap_limit = w // 16
 
-        font.size = img.width * img.height * 0.05
-
-        text = '\n'.join(textwrap.wrap(sentence, rect['w'] // 36)).upper()
+        text = '\n'.join(textwrap.wrap(sentence, text_wrap_limit)).upper()
 
         draw.rectangle((x, y, x + w, y + h), fill=(255, 255, 255))
         draw.text((x, y), text, (0,0,0), font=font)

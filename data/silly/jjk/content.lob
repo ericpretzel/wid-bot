@@ -4,7 +4,6 @@
 // each type symbol on the left side represents how the phrase can be used in a sentence.
 // each type symbol used on the right side represents a possible insertion point for a phrase that has that symbol.
 // e.g. 'hello [NOUN]' could generate the sentence 'hello world' or 'hello friend'
-// possible symbols: [NOUN][NAME][ADJECTIVE][VERB][ADVERB][PREFIX][SENTENCE]
 // TODO: if they contain a ? they are optional or something
 // TODO: system to guarantee distinct symbols? maybe like ADJECTIVE1 ADJECTIVE2 ... etc. this also lets you re-use specific ones
 // lines with [SENTENCE] on the left are used as "base" phrases for the final result
@@ -64,22 +63,30 @@
 [NAME]:choso
 [NAME]:mahito
 [NAME]:the one who left it all behind
-[SENTENCE]:the one who left it all behind, and his overwhelming [NOUN]
-[SENTENCE]:stand proud, you're [ADJECTIVE]
-[SENTENCE]:stand proud [NAME], you're [ADJECTIVE]
-[SENTENCE]:with this [NOUN] i summon [NAME]
-[SENTENCE]:nah, i'd win
-[SENTENCE]:nah, [NAME|NOUN]'d win
-[SENTENCE]:nah, i'd lose
+[SENTENCE]:yo, [NAME]!
+[SENTENCE]:yo.
+[SENTENCE]:the one who left it all behind, and his overwhelming [NOUN].
+[SENTENCE]:stand proud, you're [ADJECTIVE].
+[SENTENCE]:stand proud [NAME], you're [ADJECTIVE].
+[SENTENCE]:stand proud,
+[SENTENCE]:you're [ADJECTIVE].
+[SENTENCE]:with this [NOUN] i summon [NAME].
+[SENTENCE]:nah,
+[SENTENCE]:nah, i'd win.
+[SENTENCE]:nah, [NAME|NOUN]'d win.
+[SENTENCE]:nah, i'd lose.
 [SENTENCE]:nah, i'd [VERB|SENTENCE]
-[SENTENCE]:throughout heaven and earth, i alone am the [ADJECTIVE] [NOUN]
-[SENTENCE]:throughout heaven and earth, i alone am the honored [NOUN]
+[SENTENCE]:throughout heaven and earth, i alone am the [ADJECTIVE] [NOUN].
+[SENTENCE]:throughout heaven and earth, i alone am the honored [NOUN].
 [SENTENCE]:throughout heaven and earth, [SENTENCE]
-[SENTENCE]:are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE] or are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE]
-[SENTENCE]:always bet on [NAME|SENTENCE|NOUN]
-[SENTENCE]:domain expansion: [NOUN]
-[SENTENCE]:uh, sorry but i ate that [NOUN]
-[SENTENCE]:technique reversal: [NOUN]
-[SENTENCE]:i like a man who's [ADJECTIVE] and [ADJECTIVE]
-[SENTENCE]:[SENTENCE] [SENTENCE]
-[SENTENCE]:this was truly a [ADJECTIVE] [NOUN|NAME]
+[SENTENCE]:throughout heaven and earth,
+[SENTENCE]:are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE]
+[SENTENCE]:or are you [NAME|NOUN|ADJECTIVE] because you're [NAME|NOUN|ADJECTIVE]?
+[SENTENCE]:always bet on [NAME|SENTENCE|NOUN].
+[SENTENCE]:domain expansion: [NOUN].
+[SENTENCE]:domain expansion.
+[SENTENCE]:uh, sorry but i ate that [NOUN].
+[SENTENCE]:technique reversal: [NOUN].
+[SENTENCE]:i like a man who's [ADJECTIVE] and [ADJECTIVE].
+[SENTENCE]:this was truly a [ADJECTIVE] [NOUN|NAME].
+[SENTENCE]:don't you have a [NOUN]?

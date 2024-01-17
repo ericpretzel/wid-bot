@@ -68,7 +68,8 @@ class Fun(commands.Cog):
             message = message[:2000-3] + '...'
         return await ctx.respond(message)
 
-    @slash_command(guild_ids=[config.GUILD_ID])
+    @slash_command(guild_ids=[config.GUILD_ID],
+        description='Generate a silly image from hit manga Jujutsu Kaisen')
     async def sillyfy(self, ctx: discord.ApplicationContext):
         # todo make it possible to sillyfy other things than just jjk
         await ctx.defer()
@@ -85,7 +86,7 @@ def setup(bot):
     with open(config.EMOJI_MAPPINGS) as f:
         mappings = json.load(f)
         emojifier = Emojifier(mappings)
-    # todo put the filename in config.py
+
     jjk_phrases, jjk_image_data = silly.load_silly(config.SILLY_JJK)
 
     bot.add_cog(Fun(bot, emojifier, jjk_phrases, jjk_image_data))
